@@ -174,7 +174,7 @@ associated with red color.  But I will decide about that later.
 [Presentation Developing for Round]: https://youtu.be/3a1V4n9HDvY
 [Rebble SDK instruction]: https://help.rebble.io/sdk/
 [Rebble icons]: https://github.com/piggehperson/rebble-icons
-[Rebble]: http://apps.rebble.io/
+[Rebble]: http://rebble.io/
 [Storytelling in pixels]: https://old.heydays.no/project/pebble/
 [Watchface Analogous]: http://apps.rebble.io/en_US/application/5674eb2c1caa144be8000076?native=false&query=analogous&section=watchfaces
 [Watchface DIGIANA002]: https://www.reddit.com/r/pebble/comments/7eynb0/watchface_of_the_day_pebble_2_minimalistic_mix/
