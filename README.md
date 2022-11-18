@@ -7,6 +7,12 @@ Pebble watchface created during [Rebble][] [Hackathon #001][].  Idea was
 to have watchface inspired by Rebble official logo and Pebble visual
 language (UI design and animations).
 
+## Icons
+
+- ![25orange](icon/25orange.png)
+- ![emoji32](icon/emoji32.png)
+- ![emoji128](icon/emoji128.png)
+
 ## Development log
 
 ### 2022.11.06 Sun 18:18 - Installing SDK, first try
@@ -151,6 +157,11 @@ size that is 25x25 px as far as i know.  I posted it on Discord Rebble
 
 WoW!  That's so great ^-^ I followed up with slightly bigger icon
 aligned with Discord emoji resolution specification.
+
+I used orange color for icons background.  It's the closest orange
+from Pebble color pallet that match orange used in Rebble logo.  But I
+think that main weatchface color should be red.  Rebellion is often
+associated with red color.  But I will decide about that later.
 
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
