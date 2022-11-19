@@ -1,12 +1,12 @@
 {
-  "name": "pRebble",
+  "name": "prebble",
   "author": "irek",
   "version": "1.0.0",
   "keywords": ["pebble-watchface", "hackathon1", "prebble", "pRebble"],
   "private": false,
   "dependencies": {},
   "pebble": {
-    "displayName": "prebble",
+    "displayName": "pRebble",
     "uuid": "f5a97a3e-4aa4-4a46-a8a1-ca590667b2d7",
     "sdkVersion": "3",
     "enableMultiJS": true,
@@ -23,7 +23,13 @@
       "dummy"
     ],
     "resources": {
-      "media": []
+      "media": [
+	{
+	  "type": "raw",
+	  "name": "ANALOG",
+	  "file": "analog.pdc"
+	}
+      ]
     }
   }
 }

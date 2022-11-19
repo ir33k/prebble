@@ -229,6 +229,97 @@ Now for the main event.  Drawing vector graphics.  I will make a break
 tho.  I have breakfast on my mind.  I shouldn't stop til nightfall
 gentleman, but second breakfast will do fine 🍎.
 
+### 2022.11.19 Sat 17:34 - First Pebble Draw Commands (PDC)
+
+Ok so I have SVG file.  Now I need to convert it to `.pdc` with
+`svg2pdc.py`, but running this program results in error.
+
+	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py analog.svg 
+	Traceback (most recent call last):
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 17, in <module>
+	    import svg.path
+	ImportError: No module named svg.path
+
+Looks like `svg` module is missing.  I thin I can install it with:
+
+	$ python2 -m pip install svg.path
+	
+So that worked but now I have different error.
+
+	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py analog.svg
+	Traceback (most recent call last):
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 17, in <module>
+	    import svg.path
+	  File "/home/irek/.local/lib/python2.7/site-packages/svg/path/__init__.py", line 1, in <module>
+	    from .path import Path, Move, Line, Arc, Close  # noqa: 401
+	  File "/home/irek/.local/lib/python2.7/site-packages/svg/path/path.py", line 105
+	    return f"Line(start={self.start}, end={self.end})"
+	                                                     ^
+	SyntaxError: invalid syntax
+
+Syntax error in module file?  This looks almost like if installed
+module is not written for python2.
+
+And probably yes.  Because in module [svg.path CHANGES.txt][] file I
+can clearly see that they dropped support for Python 2 in first half
+of this year.  So I think that I need to get older version manually.
+Let's try to do that.  I will try to get version 4.1.
+
+	$ git clone https://github.com/regebro/svg.path.git
+	$ cd svg.path
+	$ git checkout 4.1
+	$ rm -rf ~/.local/lib/python2.7/site-packages/svg
+	$ cp -r src/svg ~/.local/lib/python2.7/site-packages/
+	
+FIRST TRY!  It works.  I mean the script.  I still have errors but
+different kind of errors.  Looks like my path is not pixel perfect.
+After quick fix I got another error.
+
+	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py analog.svg
+	Traceback (most recent call last):
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 646, in <module>
+	    main(args)
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 621, in main
+	    args.precise)
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 589, in create_pdc_from_path
+	    size, commands, error = parse_svg_image(path, precise, raise_error)
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 549, in parse_svg_image
+	    cmd_list, error = get_commands(translate, root, precise, raise_error)
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 463, in get_commands
+	    cmd_list, err = get_commands(translate, child, precise, raise_error, truncate_color)
+	  File "/home/irek/pebble/cards-example/tools/svg2pdc.py", line 459, in get_commands
+	    translate_strs = re.search(r'(?:translate\()(.*),(.*)\)',transform).group(1,2)
+	AttributeError: 'NoneType' object has no attribute 'group'
+
+That was due to my mistake of grouping few elements together.  Script
+don't support SVG groups and it was mention in documentation so let's
+try again without any groups.
+
+I got my `.pdc` file, despite few "Invalid point" messages, because
+Inkscape seems to be very inaccurate even with snap to grid option.
+Let's try to draw that in watchface.
+
+### 2022.11.19 Sat 18:12 - It's alive!
+
+It works!  That's great.  Now I need adjust position.
+
+### 2022.11.19 Sat 18:28
+
+It's great.  But I still see some jagged edges.  Inkscape you have
+failed me for the last time.
+
+### 2022.11.19 Sat 19:07
+
+This is insane.  Inkscape rly like to force you to use floats.  And it
+looks like it remembers which point was moved and it will not update
+it position in output file unless you move that specific point.  So
+after manually moving each point back and forward to snap it to pixel
+grid i finally have expected result.  It's perfect!  But I consider
+switching to different tool.  Maybe Figma?
+
+![screenshot03 - aplite with analog](img/screenshot03.png)
+![screenshot04 - basalt with analog](img/screenshot04.png)
+
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
 [Pebble Compass]: https://github.com/HBehrens/pebble-compass
@@ -244,3 +335,4 @@ gentleman, but second breakfast will do fine 🍎.
 [Watchface Analogous]: http://apps.rebble.io/en_US/application/5674eb2c1caa144be8000076?native=false&query=analogous&section=watchfaces
 [Watchface DIGIANA002]: https://www.reddit.com/r/pebble/comments/7eynb0/watchface_of_the_day_pebble_2_minimalistic_mix/
 [Pebble system fonts]: https://developer.rebble.io/developer.pebble.com/guides/app-resources/system-fonts/index.html
+[svg.path CHANGES.txt]: https://github.com/regebro/svg.path/blob/d38002122fb50c63fa4a7e30cc834a60479c766a/CHANGES.txt#L79
