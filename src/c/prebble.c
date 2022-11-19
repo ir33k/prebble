@@ -1,7 +1,8 @@
 #include <pebble.h>
 
-static Window      *s_win;      // Main window
-static Layer       *s_bg_layer;	// Background
+static Window      *s_win;           // Main window
+static Layer       *s_main_bg_layer; // Color background with pattern
+static Layer       *s_time_bg_layer; // Background for time and data
 
 int abs(int x) {
   return x < 0 ? x*-1 : x;
@@ -25,27 +26,41 @@ static void draw_pattern_lines(GContext *ctx, GRect bounds, GColor color) {
   }
 }
 
-static void bg_update(Layer *layer, GContext *ctx) {
+static void main_bg_layer_update(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
 
-  // Draw the background
   graphics_context_set_fill_color(ctx, GColorRed);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
   draw_pattern_lines(ctx, bounds, GColorBlack);
 }
 
-static void win_load(Window *win) {
-  Layer *root_layer = window_get_root_layer(win);
-  GRect root_bounds = layer_get_bounds(root_layer);
+static void time_bg_layer_update(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
 
-  // Background
-  s_bg_layer = layer_create(root_bounds);
-  layer_set_update_proc(s_bg_layer, bg_update);
-  layer_add_child(root_layer, s_bg_layer);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+}
+
+static void win_load(Window *win) {
+  Layer *layer = window_get_root_layer(win);
+  GRect bounds = layer_get_bounds(layer);
+
+  // Main background
+  s_main_bg_layer = layer_create(bounds);
+  layer_set_update_proc(s_main_bg_layer, main_bg_layer_update);
+  layer_add_child(layer, s_main_bg_layer);
+  // Time background
+  s_time_bg_layer = layer_create(GRect(bounds.origin.x,
+                                       bounds.origin.y + bounds.size.h/2,
+                                       bounds.size.w,
+                                       bounds.size.h/2));
+  layer_set_update_proc(s_time_bg_layer, time_bg_layer_update);
+  layer_add_child(layer, s_time_bg_layer);
 }
 
 static void win_unload(Window *win) {
-  layer_destroy(s_bg_layer);
+  layer_destroy(s_main_bg_layer);
+  layer_destroy(s_time_bg_layer);
 }
 
 static void init(void) {
