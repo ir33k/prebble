@@ -216,6 +216,18 @@ because it has to be precise to make that happen.
 
 ![screenshot01 - background with pattern](img/screenshot01.png)
 
+### 2022.11.19 Sat 11:03 - The time has come to load fonts
+
+I have time and date.  It was easy because there is nothing fancy
+about it.  I used fonts from [Pebble system fonts][] lib.  I planned
+that from beginning.  This should bring me even closer to have look
+and feel of original Pebble UI.
+
+![screenshot02 - time and date](img/screenshot02.png)
+
+Now for the main event.  Drawing vector graphics.  I will make a break
+tho.  I have breakfast on my mind.  I shouldn't stop til nightfall
+gentleman, but second breakfast will do fine 🍎.
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
@@ -231,3 +243,4 @@ because it has to be precise to make that happen.
 [Storytelling in pixels]: https://old.heydays.no/project/pebble/
 [Watchface Analogous]: http://apps.rebble.io/en_US/application/5674eb2c1caa144be8000076?native=false&query=analogous&section=watchfaces
 [Watchface DIGIANA002]: https://www.reddit.com/r/pebble/comments/7eynb0/watchface_of_the_day_pebble_2_minimalistic_mix/
+[Pebble system fonts]: https://developer.rebble.io/developer.pebble.com/guides/app-resources/system-fonts/index.html
