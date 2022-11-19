@@ -336,6 +336,18 @@ adjusting layer size to make it have middle pixel solved this problem.
 
 Now what?
 
+### 2022.11.20 Sun 00:56 - You spine me round round
+
+After just few adjustments watchface works on Pebble Round.  I added
+slightly rounded corners to digital time background.  After that I had
+an idea to make this background an circle in Pebble Round.  This makes
+sense and looks great.  Another small change was to display
+abbreviation of month name on Pebble Round.  It fits better small
+space at the bottom.
+
+![screenshot07 - chalk support](img/screenshot07.png)
+
+
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
 [Pebble Compass]: https://github.com/HBehrens/pebble-compass

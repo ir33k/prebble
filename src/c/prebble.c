@@ -18,7 +18,7 @@ int abs(int x) {
 
 static void draw_pattern_lines(GContext *ctx, GRect bounds, GColor color) {
   int16_t y;
-  int16_t step = abs(bounds.size.w - bounds.size.h) / 2;
+  int16_t step = 24;
   int16_t beg = bounds.origin.y - step * (bounds.size.w / step);
   int16_t end = bounds.origin.y + bounds.size.h;
 
@@ -44,7 +44,14 @@ static void bg_main_layer_update(Layer *layer, GContext *ctx) {
 static void bg_text_layer_update(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
   graphics_context_set_fill_color(ctx, GColorWhite);
-  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+#ifdef PBL_RECT
+  graphics_fill_rect(ctx, bounds, 4, GCornerTopLeft | GCornerTopRight);
+#else
+  graphics_fill_circle(ctx,
+                       GPoint(bounds.origin.x + bounds.size.w/2,
+                              bounds.origin.y + bounds.size.h),
+                       bounds.size.h);
+#endif
 }
 
 static void analog_layer_update(Layer *layer, GContext *ctx) {
@@ -82,14 +89,15 @@ static void hands_layer_update(Layer *layer, GContext *ctx) {
 
 static void time_set(struct tm *time) {
   static char buf[16];
-  strftime(buf, sizeof(buf), s_is24h ? "%k:%M" : "%l:%M %p", time);
+  // https://sourceware.org/newlib/libc.html#strftime
+  strftime(buf, sizeof(buf), s_is24h ? "%H:%M" : "%I:%M %p", time);
   text_layer_set_text(s_time_layer, buf);
 }
 
 static void date_set(struct tm *time) {
   static char buf[16];
   // https://sourceware.org/newlib/libc.html#strftime
-  strftime(buf, sizeof(buf), "%B %e", time);
+  strftime(buf, sizeof(buf), PBL_IF_ROUND_ELSE("%b %e", "%B %e"), time);
   text_layer_set_text(s_date_layer, buf);
 }
 
@@ -113,7 +121,7 @@ static void win_load(Window *win) {
   GRect main_rect = GRect(rect.origin.x,
                           rect.origin.y,
                           rect.size.w,
-                          rect.size.h/2);
+                          rect.size.h);
   s_bg_main_layer = layer_create(main_rect);
   layer_set_update_proc(s_bg_main_layer, bg_main_layer_update);
   layer_add_child(layer, s_bg_main_layer);
@@ -153,9 +161,9 @@ static void win_load(Window *win) {
 
   // Analog image
   GSize analog_bounds = gdraw_command_image_get_bounds_size(s_analog_pdc);
-  GRect analog_rect = GRect(rect.origin.x,
-                            rect.origin.y - 14, // Note the offset
-                            // -1 Is necessary to have size that have
+  GRect analog_rect = GRect(rect.origin.x + (rect.size.w - analog_bounds.w)/2,
+                            rect.origin.y - PBL_IF_ROUND_ELSE(8, 14),
+                            // -1 is necessary to have size that have
                             // center pixel.  When analog_rect is used
                             // to create layer for analog hands it will
                             // pass size that can have that middle
