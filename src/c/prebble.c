@@ -2,7 +2,6 @@
 
 static Window      *s_win;	// Main window
 static BitmapLayer *s_bg_layer;	// Background
-static GBitmap     *s_bg_bitmap;
 
 static void win_load(Window *win) {
   Layer *root_layer = window_get_root_layer(win);
