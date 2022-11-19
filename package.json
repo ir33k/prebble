@@ -1,35 +1,29 @@
 {
-    "name": "prebble",
-    "author": "irek",
-    "version": "1.0.0",
-    "keywords": ["pebble-app", "hackathon1"],
-    "private": true,
-    "dependencies": {},
-    "pebble": {
-	"displayName": "prebble",
-	"uuid": "f5a97a3e-4aa4-4a46-a8a1-ca590667b2d7",
-	"sdkVersion": "3",
-	"enableMultiJS": true,
-	"targetPlatforms": [
-	    "aplite",
-	    "basalt",
-	    "chalk",
-	    "diorite"
-	],
-	"watchapp": {
-	    "watchface": true
-	},
-	"messageKeys": [
-	    "dummy"
-	],
-	"resources": {
-            "media": [
-                {
-                    "type": "bitmap",
-                    "name": "IMG_WF",
-                    "file": "img/wf03.png"
-                }
-            ]
-        }
+  "name": "pRebble",
+  "author": "irek",
+  "version": "1.0.0",
+  "keywords": ["pebble-watchface", "hackathon1", "prebble", "pRebble"],
+  "private": false,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "prebble",
+    "uuid": "f5a97a3e-4aa4-4a46-a8a1-ca590667b2d7",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "messageKeys": [
+      "dummy"
+    ],
+    "resources": {
+      "media": []
     }
+  }
 }
