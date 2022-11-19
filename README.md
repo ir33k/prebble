@@ -7,7 +7,10 @@ Pebble watchface created during [Rebble][] [Hackathon #001][].  Idea was
 to have watchface inspired by Rebble official logo and Pebble visual
 language (UI design and animations).
 
-![first watchface picture](img/pic01.jpeg)
+![screenshot05 - aplite with working analog](img/screenshot05.png)
+![screenshot06 - basalt with working analog](img/screenshot06.png)
+
+![picture of first working version](img/pic02.jpeg)
 
 ## Icons
 
@@ -317,8 +320,21 @@ after manually moving each point back and forward to snap it to pixel
 grid i finally have expected result.  It's perfect!  But I consider
 switching to different tool.  Maybe Figma?
 
-![screenshot03 - aplite with analog](img/screenshot03.png)
-![screenshot04 - basalt with analog](img/screenshot04.png)
+![screenshot03 - aplite with static analog](img/screenshot03.png)
+![screenshot04 - basalt with static analog](img/screenshot04.png)
+
+### 2022.11.19 Sat 23:31 - Hands up!
+
+I have analog clock hands.  At the beginning code resulted in not very
+straight lines.  It took me a while to realize that it's impossible to
+calculate point right above middle of the circle if there is no center
+pixel.  Code have chose one on the right or one on the left.  But
+adjusting layer size to make it have middle pixel solved this problem.
+
+![screenshot05 - aplite with working analog](img/screenshot05.png)
+![screenshot06 - basalt with working analog](img/screenshot06.png)
+
+Now what?
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html

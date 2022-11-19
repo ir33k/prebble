@@ -8,8 +8,9 @@ static TextLayer         *s_time_layer;    // Digital time
 static GFont              s_time_font;     // 
 static TextLayer         *s_date_layer;    // Date
 static GFont              s_date_font;     //
-static Layer             *s_analog_layer;  // Analog watch
+static Layer             *s_analog_layer;  // Analog watch image
 static GDrawCommandImage *s_analog_pdc;    //
+static Layer             *s_hands_layer;   // Analog watch hands
 
 int abs(int x) {
   return x < 0 ? x*-1 : x;
@@ -51,6 +52,34 @@ static void analog_layer_update(Layer *layer, GContext *ctx) {
   gdraw_command_image_draw(ctx, s_analog_pdc, GPoint(0, 0));
 }
 
+static void hands_layer_update(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+  time_t timestamp = time(NULL);
+  struct tm *time = localtime(&timestamp);  
+
+  graphics_context_set_antialiased(ctx, true);
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+
+  GPoint mid = grect_center_point(&bounds);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_circle(ctx, mid, 2);
+
+  GPoint hour = gpoint_from_polar(grect_inset(bounds, GEdgeInsets(14)),
+                                  GOvalScaleModeFitCircle,
+                                  DEG_TO_TRIGANGLE(360*time->tm_hour/24) +
+                                  DEG_TO_TRIGANGLE(360/24*time->tm_min/60));
+  graphics_context_set_stroke_width(ctx, 4);
+  graphics_draw_line(ctx, mid, hour);
+  graphics_fill_circle(ctx, hour, 2);
+
+  GPoint min = gpoint_from_polar(grect_inset(bounds, GEdgeInsets(2)),
+                                 GOvalScaleModeFillCircle,
+                                 DEG_TO_TRIGANGLE(360*time->tm_min/60));
+  graphics_context_set_stroke_width(ctx, 4);
+  graphics_draw_line(ctx, mid, min);
+  graphics_fill_circle(ctx, min, 2);
+}
+
 static void time_set(struct tm *time) {
   static char buf[16];
   strftime(buf, sizeof(buf), s_is24h ? "%k:%M" : "%l:%M %p", time);
@@ -70,6 +99,7 @@ static void on_min(struct tm *time, TimeUnits change) {
   if (change & DAY_UNIT) {
     date_set(time);
   }
+  layer_mark_dirty(s_hands_layer);
 }
 
 static void win_load(Window *win) {
@@ -78,6 +108,7 @@ static void win_load(Window *win) {
 
   // Settings
   s_is24h = clock_is_24h_style(); // Might change, better update
+
   // Main background
   GRect main_rect = GRect(rect.origin.x,
                           rect.origin.y,
@@ -86,6 +117,7 @@ static void win_load(Window *win) {
   s_bg_main_layer = layer_create(main_rect);
   layer_set_update_proc(s_bg_main_layer, bg_main_layer_update);
   layer_add_child(layer, s_bg_main_layer);
+
   // Text background for time and date
   GRect text_rect = GRect(rect.origin.x,
                           rect.origin.y + rect.size.h/2,
@@ -94,9 +126,10 @@ static void win_load(Window *win) {
   s_bg_text_layer = layer_create(text_rect);
   layer_set_update_proc(s_bg_text_layer, bg_text_layer_update);
   layer_add_child(layer, s_bg_text_layer);
+
   // Time
   GRect time_rect = GRect(text_rect.origin.x,
-                          text_rect.origin.y + 16,
+                          text_rect.origin.y + 18,
                           text_rect.size.w,
                           32);
   s_time_layer = text_layer_create(time_rect);
@@ -105,9 +138,10 @@ static void win_load(Window *win) {
   text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   layer_add_child(layer, text_layer_get_layer(s_time_layer));
+
   // Date
   GRect date_rect = GRect(time_rect.origin.x,
-                          time_rect.origin.y + time_rect.size.h,
+                          time_rect.origin.y + time_rect.size.h - 4,
                           time_rect.size.w,
                           18);
   s_date_layer = text_layer_create(date_rect);
@@ -116,21 +150,34 @@ static void win_load(Window *win) {
   text_layer_set_font(s_date_layer,  s_date_font);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   layer_add_child(layer, text_layer_get_layer(s_date_layer));
-  // Analog
+
+  // Analog image
   GSize analog_bounds = gdraw_command_image_get_bounds_size(s_analog_pdc);
   GRect analog_rect = GRect(rect.origin.x,
-                            rect.origin.y,
-                            analog_bounds.w,
-                            analog_bounds.h);
+                            rect.origin.y - 14, // Note the offset
+                            // -1 Is necessary to have size that have
+                            // center pixel.  When analog_rect is used
+                            // to create layer for analog hands it will
+                            // pass size that can have that middle
+                            // pixel making gpoint_from_polar return
+                            // points that produce straight lines.
+                            analog_bounds.w - 1,
+                            analog_bounds.h - 1);
   s_analog_layer = layer_create(analog_rect);
   layer_set_update_proc(s_analog_layer, analog_layer_update);
   layer_add_child(layer, s_analog_layer);
+
+  // Analog hands
+  s_hands_layer = layer_create(grect_inset(analog_rect, GEdgeInsets(40)));
+  layer_set_update_proc(s_hands_layer, hands_layer_update);
+  layer_add_child(layer, s_hands_layer);
 }
 
 static void win_unload(Window *win) {
   layer_destroy(s_bg_main_layer);
   layer_destroy(s_bg_text_layer);
   layer_destroy(s_analog_layer);
+  layer_destroy(s_hands_layer);
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_date_layer);
 }
@@ -138,19 +185,23 @@ static void win_unload(Window *win) {
 static void init(void) {
   // Settings
   s_is24h = clock_is_24h_style();
+
   // Fonts
   // TODO For now I chosen this font because I can easilly support AM
   // and PM with it.  I would have to think about the whole AM PM
   // situation in more depth later.
   s_time_font = fonts_get_system_font(FONT_KEY_LECO_26_BOLD_NUMBERS_AM_PM);
   s_date_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+
   // PDC images
   s_analog_pdc = gdraw_command_image_create_with_resource(RESOURCE_ID_ANALOG);
+
   // Window
   s_win = window_create();
   WindowHandlers win_h = { win_load, 0, 0, win_unload };
   window_set_window_handlers(s_win, win_h);
   window_stack_push(s_win, true);
+
   // Time and date.  Update time and date even before first tick by
   // calling onmin() tick handler manually.  Required because first
   // tick happen after first minute ends and we want to show correct
