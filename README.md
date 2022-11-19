@@ -163,6 +163,44 @@ from Pebble color pallet that match orange used in Rebble logo.  But I
 think that main weatchface color should be red.  Rebellion is often
 associated with red color.  But I will decide about that later.
 
+### 2022.11.19 Sat 08:18 - Day one
+
+Yesterday I focused mostly on design.  File [design.svg](./design.svg)
+was created and besides few chosen graphics on main page there are
+many abandoned ideas outside of the page.
+
+Initially I gravitated towards big very abstract analog watchface.
+Then I created simple icon style analog watchface that both in layout
+and style should resemble regular Pebble icons that appears when you
+toggle quiet time, mute app etc.  The last idea was to play with light
+and shadows using big shapes.  I made silhouette of original Pebble
+using just one big black shape and few light spots with white screen.
+This watchface was fully digital.  Initially I rly liked it but
+usually picture of Pebble watch inside Pebble watch is not a good idea
+and it was the same in this case.
+
+So I went back to second concept.  After refining it and testing on
+actual watch I realized that this is the on that meets my goals and
+looks very clean on watch.  My new favorite watchface!
+
+I mentioned testing designs on watch itself.  For that I created new
+Pebble project.  With knowledge from tutorial I was able to quickly
+make it display single bitmap.  This was used to test all designs.
+
+### 2022.11.19 Sat 08:28 - What next?
+
+> After three days without programming, life becomes meaningless.
+
+Enough of design.  Time to code.  I will start by creating red
+background with subtle stripes across whole screen.  It would be great
+to have option to customize background to your liking.  But that is
+not necessary right now.  So I will hardcode default background first.
+
+Then I can add white background for digital time and time itself.
+After that icon.  There will be a lot of fun with vector graphic API.
+I did some reading yesterday.  Making static image should not be a big
+deal but animation might take some time.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
