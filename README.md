@@ -207,6 +207,15 @@ After that icon.  There will be a lot of fun with vector graphic API.
 I did some reading yesterday.  Making static image should not be a big
 deal but animation might take some time.
 
+### 2022.11.19 Sat 09:46 - What is your background sir?
+
+Background is ready.  Pure red with black lines across the screen.
+Note the details.  Lines are positioned in a way that makes them start
+and end in the corners.  This characteristic defines gap between lines
+because it has to be precise to make that happen.
+
+![screenshot01 - background with pattern](img/screenshot01.png)
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
