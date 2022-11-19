@@ -183,6 +183,10 @@ So I went back to second concept.  After refining it and testing on
 actual watch I realized that this is the on that meets my goals and
 looks very clean on watch.  My new favorite watchface!
 
+![watchface design - black-white](resources/img/wf01.png)
+![watchface design - green](resources/img/wf02.png)
+![watchface design - red](resources/img/wf03.png)
+
 I mentioned testing designs on watch itself.  For that I created new
 Pebble project.  With knowledge from tutorial I was able to quickly
 make it display single bitmap.  This was used to test all designs.
