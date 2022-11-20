@@ -372,6 +372,17 @@ the end I have my sequence animation for analog clock.  It runs on
 each minute.
 
 ![animation02 - sequence analog clock animation](devlog/animation02.mp4)
+![animation03 - green background](devlog/animation03.mp4)
+
+### 2022.11.20 Sun 21:43 - Unobstructed area AKA Quick View
+
+That was the last thing that I wanted to handle - unobstructed area.
+It works just by hiding digital area section.  It looks very nice tho.
+Anyway.  I wanted to add customization for background color but I
+don't think there is enough time for that.  Will see.  I will prepare
+everything for release and then decide.
+
+![animation04 - quick view](devlog/animation04.mp4)
 
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
