@@ -9,7 +9,7 @@ static GFont              s_time_font;     //
 static TextLayer         *s_date_layer;    // Date
 static GFont              s_date_font;     //
 static Layer             *s_analog_layer;  // Analog watch image
-static GDrawCommandImage *s_analog_pdc;    //
+static GDrawCommandImage *s_analog_img;    //
 static Layer             *s_hands_layer;   // Analog watch hands
 
 // Get absolute value of X.
@@ -57,7 +57,7 @@ static void bg_text_layer_update(Layer *layer, GContext *ctx) {
 
 static void analog_layer_update(Layer *layer, GContext *ctx) {
   graphics_context_set_antialiased(ctx, false);
-  gdraw_command_image_draw(ctx, s_analog_pdc, GPoint(0, 0));
+  gdraw_command_image_draw(ctx, s_analog_img, GPoint(0, 0));
 }
 
 static void hands_layer_update(Layer *layer, GContext *ctx) {
@@ -169,7 +169,7 @@ static void win_load(Window *win) {
   layer_add_child(s_bg_text_layer, text_layer_get_layer(s_date_layer));
 
   // Analog image
-  GSize analog_bounds = gdraw_command_image_get_bounds_size(s_analog_pdc);
+  GSize analog_bounds = gdraw_command_image_get_bounds_size(s_analog_img);
   GRect analog_rect = GRect(rect.origin.x + (rect.size.w - analog_bounds.w)/2,
                             rect.origin.y - PBL_IF_ROUND_ELSE(8, 14),
                             // -1 is necessary to have size that have
@@ -210,7 +210,7 @@ static void init(void) {
   s_date_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
   // PDC images
-  s_analog_pdc = gdraw_command_image_create_with_resource(RESOURCE_ID_ANALOG);
+  s_analog_img = gdraw_command_image_create_with_resource(RESOURCE_ID_ANALOG);
 
   // Window
   s_win = window_create();
@@ -229,7 +229,7 @@ static void init(void) {
 
 static void deinit(void) {
   window_destroy(s_win);
-  gdraw_command_image_destroy(s_analog_pdc);
+  gdraw_command_image_destroy(s_analog_img);
 }
 
 int main(void) {
