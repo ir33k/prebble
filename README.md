@@ -8,6 +8,7 @@ to have watchface inspired by Rebble official logo and Pebble visual
 language (UI design and animations).
 
 ![Green version showing animation](devlog/animation03.gif )
+![Quick View example](devlog/animation04.gif )
 
 ## Icons
 
