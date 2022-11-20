@@ -73,7 +73,7 @@ static void hands_layer_update(Layer *layer, GContext *ctx) {
 
   GPoint hour = gpoint_from_polar(grect_inset(bounds, GEdgeInsets(14)),
                                   GOvalScaleModeFitCircle,
-                                  DEG_TO_TRIGANGLE(360*time->tm_hour/24) +
+                                  DEG_TO_TRIGANGLE(360*(time->tm_hour%12)/12) +
                                   DEG_TO_TRIGANGLE(360/24*time->tm_min/60));
   graphics_context_set_stroke_width(ctx, 4);
   graphics_draw_line(ctx, mid, hour);
