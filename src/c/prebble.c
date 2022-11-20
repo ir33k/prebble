@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-static int         s_is24h;		   /* None 0 when 24h */
+static bool        s_is24h;		   /* True when 24h */
 static Window     *s_win;		   /* Main window */
 static Layer      *s_bg_main_layer;	   /* Color background */
 static Layer      *s_bg_text_layer;	   /* Time and date BG */
@@ -53,15 +53,6 @@ draw_pattern_lines(GContext *ctx, GRect bounds, GColor color)
 }
 
 static void
-bg_main_layer_update(Layer *layer, GContext *ctx)
-{
-	GRect bounds = layer_get_bounds(layer);
-	graphics_context_set_fill_color(ctx, PBL_IF_BW_ELSE(GColorLightGray, GColorRed));
-	graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-	draw_pattern_lines(ctx, bounds, GColorBlack);
-}
-
-static void
 bg_text_layer_update(Layer *layer, GContext *ctx)
 {
 	GRect bounds = layer_get_bounds(layer);
@@ -74,14 +65,6 @@ bg_text_layer_update(Layer *layer, GContext *ctx)
 				    bounds.origin.y + bounds.size.h),
 			     bounds.size.h);
 #endif
-}
-
-/* Run analog clock sequence animation with initial DELAY in ms. */
-void
-analog_anim_run(uint32_t delay)
-{
-	s_index = 0;
-	app_timer_register(delay, next_frame_handler, NULL);
 }
 
 static void
@@ -125,12 +108,30 @@ hands_layer_update(Layer *layer, GContext *ctx)
 	graphics_fill_circle(ctx, point, 2);
 
 	/* Minute hand. */
-	inset = grect_inset(bounds, GEdgeInsets(2));
+	inset = grect_inset(bounds, GEdgeInsets(3));
 	angle = DEG_TO_TRIGANGLE(360*time->tm_min/60);
 	point = gpoint_from_polar(inset, GOvalScaleModeFillCircle, angle);
 	graphics_context_set_stroke_width(ctx, 4);
 	graphics_draw_line(ctx, mid, point);
 	graphics_fill_circle(ctx, point, 2);
+}
+
+static void
+bg_main_layer_update(Layer *layer, GContext *ctx)
+{
+	GRect bounds = layer_get_bounds(layer);
+
+	graphics_context_set_fill_color(ctx, PBL_IF_BW_ELSE(GColorLightGray, GColorRed));
+	graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+	draw_pattern_lines(ctx, bounds, GColorBlack);
+}
+
+/* Run analog clock sequence animation with initial DELAY in ms. */
+void
+analog_anim_run(uint32_t delay)
+{
+	s_index = 0;
+	app_timer_register(delay, next_frame_handler, NULL);
 }
 
 static void
@@ -166,30 +167,45 @@ on_min(struct tm *time, TimeUnits change)
 }
 
 static void
+unobstructed_change(AnimationProgress progress, void *ctx)
+{
+	struct Layer *layer = window_get_root_layer(s_win);
+	GRect  bounds = layer_get_bounds(layer);
+	GRect ubounds = layer_get_unobstructed_bounds(layer);
+	bool obstructed = !grect_equal(&bounds, &ubounds);
+
+	layer_set_hidden(s_bg_text_layer, obstructed);
+}
+
+static void
 win_load(Window *win)
 {
-	Layer *layer = window_get_root_layer(win);
-	GRect  rect  = layer_get_bounds(layer);
+	Layer *layer  = window_get_root_layer(win);
+	GRect  bounds = layer_get_bounds(layer);
 
 	/* Settings that might change so better update. */
 	s_is24h = clock_is_24h_style();
 
+	/* Unobstructed area (quick view). */
+	UnobstructedAreaHandlers uareah = { 0, unobstructed_change, 0 };
+	unobstructed_area_service_subscribe(uareah, NULL);
+
 	/* Main background. */
-	GRect main_rect = GRect(rect.origin.x,
-				rect.origin.y,
-				rect.size.w,
-				rect.size.h);
+	GRect main_rect = GRect(bounds.origin.x,
+				bounds.origin.y,
+				bounds.size.w,
+				bounds.size.h);
 	s_bg_main_layer = layer_create(main_rect);
 	layer_set_update_proc(s_bg_main_layer, bg_main_layer_update);
 	layer_add_child(layer, s_bg_main_layer);
 
 	/* Text background for time and date. */
-	GRect text_rect_end = GRect(rect.origin.x,
-				    rect.origin.y + rect.size.h/2,
-				    rect.size.w,
-				    rect.size.h/2);
+	GRect text_rect_end = GRect(bounds.origin.x,
+				    bounds.origin.y + bounds.size.h/2,
+				    bounds.size.w,
+				    bounds.size.h/2);
 	GRect text_rect_beg = GRect(text_rect_end.origin.x,
-				    rect.origin.y + rect.size.h,
+				    bounds.origin.y + bounds.size.h,
 				    text_rect_end.size.w,
 				    text_rect_end.size.h);
 	s_bg_text_layer = layer_create(text_rect_beg);
@@ -229,8 +245,8 @@ win_load(Window *win)
          * analog hands it will pass size that can have that middle
          * pixel making gpoint_from_polar return points that produce
          * straight lines. */
-	GRect analog_rect = GRect(rect.origin.x + (rect.size.w - analog_bounds.w)/2,
-				  rect.origin.y - PBL_IF_ROUND_ELSE(8, 14),
+	GRect analog_rect = GRect(bounds.origin.x + (bounds.size.w - analog_bounds.w)/2,
+				  bounds.origin.y - PBL_IF_ROUND_ELSE(8, 12),
 				  analog_bounds.w - 1,
 				  analog_bounds.h - 1);
 	s_analog_layer = layer_create(analog_rect);
@@ -243,6 +259,9 @@ win_load(Window *win)
 	s_hands_layer = layer_create(hands_rect);
 	layer_set_update_proc(s_hands_layer, hands_layer_update);
 	layer_add_child(s_analog_layer, s_hands_layer);
+
+	/* Force to run logic that handles unobstructed area. */
+	unobstructed_change(0, NULL);
 }
 
 static void
