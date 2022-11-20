@@ -7,14 +7,24 @@ static Layer             *s_bg_text_layer; // Time and date BG
 static TextLayer         *s_time_layer;    // Digital time
 static GFont              s_time_font;     // 
 static TextLayer         *s_date_layer;    // Date
-static GFont              s_date_font;     //
+static GFont              s_date_font;     // 
 static Layer             *s_analog_layer;  // Analog watch image
-static GDrawCommandImage *s_analog_img;    //
+static GDrawCommandImage *s_analog_img;    // Static image
+static GDrawCommandSequence *s_analog_seq; // Animated image
+static uint32_t           s_analog_num;    // Seq frames count
+static uint32_t           s_index;
 static Layer             *s_hands_layer;   // Analog watch hands
 
 // Get absolute value of X.
 int abs(int x) {
   return x < 0 ? x*-1 : x;
+}
+
+static void next_frame_handler(void *context) {
+  layer_mark_dirty(s_analog_layer);
+  if (s_index++ < s_analog_num) {
+    app_timer_register(12, next_frame_handler, NULL);
+  }
 }
 
 static void draw_pattern_lines(GContext *ctx, GRect bounds, GColor color) {
@@ -55,9 +65,23 @@ static void bg_text_layer_update(Layer *layer, GContext *ctx) {
 #endif
 }
 
+// Run analog clock image sequence animation.
+void
+analog_anim_run(uint32_t delay)
+{
+  s_index = 0;
+  app_timer_register(delay, next_frame_handler, NULL);
+}
+
 static void analog_layer_update(Layer *layer, GContext *ctx) {
-  graphics_context_set_antialiased(ctx, false);
-  gdraw_command_image_draw(ctx, s_analog_img, GPoint(0, 0));
+  GDrawCommandFrame *frame = gdraw_command_sequence_get_frame_by_index(s_analog_seq, s_index);
+
+  if (frame) {
+    gdraw_command_frame_draw(ctx, s_analog_seq, frame, GPoint(0, 0));
+  } else {
+    graphics_context_set_antialiased(ctx, false);
+    gdraw_command_image_draw(ctx, s_analog_img, GPoint(0, 0));
+  }
 }
 
 static void hands_layer_update(Layer *layer, GContext *ctx) {
@@ -104,10 +128,13 @@ static void date_set(struct tm *time) {
 
 // TickHandler that runs after each minute.
 static void on_min(struct tm *time, TimeUnits change) {
-  time_set(time);
   if (change & DAY_UNIT) {
     date_set(time);
   }
+  if (change & MINUTE_UNIT) {
+    analog_anim_run(0);
+  }
+  time_set(time);
   layer_mark_dirty(s_hands_layer);
 }
 
@@ -142,8 +169,6 @@ static void win_load(Window *win) {
   // Animation
   PropertyAnimation *text_anim_prop = property_animation_create_layer_frame(s_bg_text_layer, &text_rect_beg, &text_rect_end);
   Animation *text_anim = property_animation_get_animation(text_anim_prop);
-  // TODO Use custom curve animation for subtle bounce effect.
-  // animation_set_custom_curve(text_anim, &anim_curve_bounce);
   animation_set_curve(text_anim, AnimationCurveDefault);
   animation_set_delay(text_anim, 20);
   animation_set_duration(text_anim, 400);
@@ -183,6 +208,7 @@ static void win_load(Window *win) {
   s_analog_layer = layer_create(analog_rect);
   layer_set_update_proc(s_analog_layer, analog_layer_update);
   layer_add_child(layer, s_analog_layer);
+  analog_anim_run(200);
   // Analog hands
   analog_rect.origin.y = 0;
   analog_rect.origin.x = 0;
@@ -211,6 +237,8 @@ static void init(void) {
 
   // PDC images
   s_analog_img = gdraw_command_image_create_with_resource(RESOURCE_ID_ANALOG);
+  s_analog_seq = gdraw_command_sequence_create_with_resource(RESOURCE_ID_ANALOG_SEQ);
+  s_analog_num = gdraw_command_sequence_get_num_frames(s_analog_seq);
 
   // Window
   s_win = window_create();
@@ -230,6 +258,7 @@ static void init(void) {
 static void deinit(void) {
   window_destroy(s_win);
   gdraw_command_image_destroy(s_analog_img);
+  gdraw_command_sequence_destroy(s_analog_seq);
 }
 
 int main(void) {

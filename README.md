@@ -7,10 +7,7 @@ Pebble watchface created during [Rebble][] [Hackathon #001][].  Idea was
 to have watchface inspired by Rebble official logo and Pebble visual
 language (UI design and animations).
 
-![screenshot05 - aplite with working analog](devlog/screenshot05.png)
-![screenshot06 - basalt with working analog](devlog/screenshot06.png)
-
-![picture of first working version](devlog/pic02.jpeg)
+![Green version showing animation](devlog/animation03.gif )
 
 ## Icons
 
