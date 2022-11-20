@@ -97,7 +97,7 @@ static void time_set(struct tm *time) {
 static void date_set(struct tm *time) {
   static char buf[16];
   // https://sourceware.org/newlib/libc.html#strftime
-  strftime(buf, sizeof(buf), PBL_IF_ROUND_ELSE("%b %e", "%B %e"), time);
+  strftime(buf, sizeof(buf), PBL_IF_ROUND_ELSE("%a %m.%d", "%A %m.%d"), time);
   text_layer_set_text(s_date_layer, buf);
 }
 
@@ -151,7 +151,7 @@ static void win_load(Window *win) {
   GRect date_rect = GRect(time_rect.origin.x,
                           time_rect.origin.y + time_rect.size.h - 4,
                           time_rect.size.w,
-                          18);
+                          22);
   s_date_layer = text_layer_create(date_rect);
   text_layer_set_background_color(s_date_layer, GColorClear);
   text_layer_set_text_color(s_date_layer, GColorBlack);
