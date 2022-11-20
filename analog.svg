@@ -78,9 +78,4 @@
      style="font-variation-settings:normal;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.99999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal;stop-color:#000000"
      d="m 97,84 h 24 L 109,72 Z"
      sodipodi:nodetypes="cccc" />
-  <path
-     id="path83389"
-     style="fill:#010101;fill-opacity:1;stroke:none;stroke-width:3.99999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-     d="m 74,71 c 0,1.104569 -0.895431,2 -2,2 -1.104569,0 -2,-0.895431 -2,-2 0,-1.104569 0.895431,-2 2,-2 1.104569,0 2,0.895431 2,2 z"
-     sodipodi:nodetypes="sssss" />
 </svg>

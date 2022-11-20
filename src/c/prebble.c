@@ -12,6 +12,7 @@ static Layer             *s_analog_layer;  // Analog watch image
 static GDrawCommandImage *s_analog_pdc;    //
 static Layer             *s_hands_layer;   // Analog watch hands
 
+// Get absolute value of X.
 int abs(int x) {
   return x < 0 ? x*-1 : x;
 }
@@ -184,6 +185,7 @@ static void win_load(Window *win) {
   layer_add_child(layer, s_analog_layer);
   // Analog hands
   analog_rect.origin.y = 0;
+  analog_rect.origin.x = 0;
   GRect hands_rect = grect_inset(analog_rect, GEdgeInsets(40));
   s_hands_layer = layer_create(hands_rect);
   layer_set_update_proc(s_hands_layer, hands_layer_update);
