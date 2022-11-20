@@ -351,6 +351,23 @@ lot to watchface.
 
 ![animation01 - first animation](devlog/animation01.mp4)
 
+### 2022.11.20 Sun 19:09 - Inkscape </3
+
+Ok so coding sequence animations with Pebble API is easy but preparing
+SVG animation in Inkscape is horrible.  I don't think that there is
+single good software for making SVG animations of this kind.  I tried
+few but most are about moving and modifying whole shapes, or final
+animation is a bitmap image or video.
+
+I even spend few hours trying animate whole thing with code point by
+point.  I learned quite a lot about how PDC format stores data.  But
+eventually I went back to Inkscape and just animated each frame by
+hand on separate layer.  Exporting was also problematic but anyway, in
+the end I have my sequence animation for analog clock.  It runs on
+each minute.
+
+![animation02 - sequence analog clock animation](devlog/animation02.mp4)
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
