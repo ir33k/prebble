@@ -127,26 +127,34 @@ static void win_load(Window *win) {
   layer_add_child(layer, s_bg_main_layer);
 
   // Text background for time and date
-  GRect text_rect = GRect(rect.origin.x,
-                          rect.origin.y + rect.size.h/2,
-                          rect.size.w,
-                          rect.size.h/2);
-  s_bg_text_layer = layer_create(text_rect);
+  GRect text_rect_end = GRect(rect.origin.x,
+                              rect.origin.y + rect.size.h/2,
+                              rect.size.w,
+                              rect.size.h/2);
+  GRect text_rect_beg = GRect(text_rect_end.origin.x,
+                              rect.origin.y + rect.size.h,
+                              text_rect_end.size.w,
+                              text_rect_end.size.h);
+  s_bg_text_layer = layer_create(text_rect_beg);
   layer_set_update_proc(s_bg_text_layer, bg_text_layer_update);
   layer_add_child(layer, s_bg_text_layer);
-
+  // Animation
+  PropertyAnimation *text_anim_prop = property_animation_create_layer_frame(s_bg_text_layer, &text_rect_beg, &text_rect_end);
+  Animation *text_anim = property_animation_get_animation(text_anim_prop);
+  // TODO Use custom curve animation for subtle bounce effect.
+  // animation_set_custom_curve(text_anim, &anim_curve_bounce);
+  animation_set_curve(text_anim, AnimationCurveDefault);
+  animation_set_delay(text_anim, 20);
+  animation_set_duration(text_anim, 400);
+  animation_schedule(text_anim);
   // Time
-  GRect time_rect = GRect(text_rect.origin.x,
-                          text_rect.origin.y + 18,
-                          text_rect.size.w,
-                          32);
+  GRect time_rect = GRect(0, 18, text_rect_end.size.w, 32);
   s_time_layer = text_layer_create(time_rect);
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, GColorBlack);
   text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-  layer_add_child(layer, text_layer_get_layer(s_time_layer));
-
+  layer_add_child(s_bg_text_layer, text_layer_get_layer(s_time_layer));
   // Date
   GRect date_rect = GRect(time_rect.origin.x,
                           time_rect.origin.y + time_rect.size.h - 4,
@@ -157,7 +165,7 @@ static void win_load(Window *win) {
   text_layer_set_text_color(s_date_layer, GColorBlack);
   text_layer_set_font(s_date_layer,  s_date_font);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
-  layer_add_child(layer, text_layer_get_layer(s_date_layer));
+  layer_add_child(s_bg_text_layer, text_layer_get_layer(s_date_layer));
 
   // Analog image
   GSize analog_bounds = gdraw_command_image_get_bounds_size(s_analog_pdc);
@@ -174,11 +182,12 @@ static void win_load(Window *win) {
   s_analog_layer = layer_create(analog_rect);
   layer_set_update_proc(s_analog_layer, analog_layer_update);
   layer_add_child(layer, s_analog_layer);
-
   // Analog hands
-  s_hands_layer = layer_create(grect_inset(analog_rect, GEdgeInsets(40)));
+  analog_rect.origin.y = 0;
+  GRect hands_rect = grect_inset(analog_rect, GEdgeInsets(40));
+  s_hands_layer = layer_create(hands_rect);
   layer_set_update_proc(s_hands_layer, hands_layer_update);
-  layer_add_child(layer, s_hands_layer);
+  layer_add_child(s_analog_layer, s_hands_layer);
 }
 
 static void win_unload(Window *win) {
@@ -195,9 +204,6 @@ static void init(void) {
   s_is24h = clock_is_24h_style();
 
   // Fonts
-  // TODO For now I chosen this font because I can easilly support AM
-  // and PM with it.  I would have to think about the whole AM PM
-  // situation in more depth later.
   s_time_font = fonts_get_system_font(FONT_KEY_LECO_26_BOLD_NUMBERS_AM_PM);
   s_date_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
