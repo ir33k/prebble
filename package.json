@@ -19,16 +19,14 @@
     "watchapp": {
       "watchface": true
     },
-    "messageKeys": [
-      "dummy"
-    ],
+    "messageKeys": [],
     "resources": {
       "media": [
-	{
-	  "type": "raw",
-	  "name": "ANALOG",
-	  "file": "analog.pdc"
-	},
+        {
+          "type": "raw",
+          "name": "ANALOG",
+          "file": "analog.pdc"
+        },
         {
           "type": "raw",
           "name": "ANALOG_SEQ",

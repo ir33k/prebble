@@ -1,3 +1,2 @@
-((nil . ((indent-tabs-mode . nil)))
- (c-mode . ((c-file-style . "gnu")))
+((c-mode . ((c-file-style . "linux")))
  (js-json-mode . ((js-indent-level . 2))))
