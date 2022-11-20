@@ -7,10 +7,10 @@ Pebble watchface created during [Rebble][] [Hackathon #001][].  Idea was
 to have watchface inspired by Rebble official logo and Pebble visual
 language (UI design and animations).
 
-![screenshot05 - aplite with working analog](img/screenshot05.png)
-![screenshot06 - basalt with working analog](img/screenshot06.png)
+![screenshot05 - aplite with working analog](log/screenshot05.png)
+![screenshot06 - basalt with working analog](log/screenshot06.png)
 
-![picture of first working version](img/pic02.jpeg)
+![picture of first working version](log/pic02.jpeg)
 
 ## Icons
 
@@ -188,9 +188,9 @@ So I went back to second concept.  After refining it and testing on
 actual watch I realized that this is the on that meets my goals and
 looks very clean on watch.  My new favorite watchface!
 
-![watchface design - black-white](img/wf01.png)
-![watchface design - green](img/wf02.png)
-![watchface design - red](img/wf03.png)
+![watchface design - black-white](log/wf01.png)
+![watchface design - green](log/wf02.png)
+![watchface design - red](log/wf03.png)
 
 I mentioned testing designs on watch itself.  For that I created new
 Pebble project.  With knowledge from tutorial I was able to quickly
@@ -217,7 +217,7 @@ Note the details.  Lines are positioned in a way that makes them start
 and end in the corners.  This characteristic defines gap between lines
 because it has to be precise to make that happen.
 
-![screenshot01 - background with pattern](img/screenshot01.png)
+![screenshot01 - background with pattern](log/screenshot01.png)
 
 ### 2022.11.19 Sat 11:03 - The time has come to load fonts
 
@@ -226,7 +226,7 @@ about it.  I used fonts from [Pebble system fonts][] lib.  I planned
 that from beginning.  This should bring me even closer to have look
 and feel of original Pebble UI.
 
-![screenshot02 - time and date](img/screenshot02.png)
+![screenshot02 - time and date](log/screenshot02.png)
 
 Now for the main event.  Drawing vector graphics.  I will make a break
 tho.  I have breakfast on my mind.  I shouldn't stop til nightfall
@@ -320,8 +320,8 @@ after manually moving each point back and forward to snap it to pixel
 grid i finally have expected result.  It's perfect!  But I consider
 switching to different tool.  Maybe Figma?
 
-![screenshot03 - aplite with static analog](img/screenshot03.png)
-![screenshot04 - basalt with static analog](img/screenshot04.png)
+![screenshot03 - aplite with static analog](log/screenshot03.png)
+![screenshot04 - basalt with static analog](log/screenshot04.png)
 
 ### 2022.11.19 Sat 23:31 - Hands up!
 
@@ -331,8 +331,8 @@ calculate point right above middle of the circle if there is no center
 pixel.  Code have chose one on the right or one on the left.  But
 adjusting layer size to make it have middle pixel solved this problem.
 
-![screenshot05 - aplite with working analog](img/screenshot05.png)
-![screenshot06 - basalt with working analog](img/screenshot06.png)
+![screenshot05 - aplite with working analog](log/screenshot05.png)
+![screenshot06 - basalt with working analog](log/screenshot06.png)
 
 Now what?
 
@@ -345,7 +345,14 @@ sense and looks great.  Another small change was to display
 abbreviation of month name on Pebble Round.  It fits better small
 space at the bottom.
 
-![screenshot07 - chalk support](img/screenshot07.png)
+![screenshot07 - chalk support](log/screenshot07.png)
+
+### 2022.11.20 Sun 11:16 - Animations
+
+I just did my first animation.  It's very quick and simple but adds a
+lot to watchface.
+
+![animation01 - first animation](log/animation01.mp4)
 
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
