@@ -11,9 +11,14 @@ language (UI design and animations).
 
 ## Icons
 
+![25bw](icon/25bw.png)
 ![25orange](icon/25orange.png)
-![emoji32](icon/emoji32.png)
+![25](icon/25.png)
+![25red](icon/25red.png)
+![50red](icon/50red.png)
+![80red](icon/80red.png)
 ![emoji128](icon/emoji128.png)
+![emoji32](icon/emoji32.png)
 
 ## Development log
 
