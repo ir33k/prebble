@@ -1,7 +1,7 @@
 {
   "name": "prebble",
   "author": "irek",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "keywords": ["pebble-watchface", "hackathon1", "prebble", "pRebble"],
   "private": false,
   "dependencies": {},
@@ -22,6 +22,12 @@
     "messageKeys": [],
     "resources": {
       "media": [
+        {
+          "menuIcon": "true",
+          "type": "png",
+          "name": "MENU_ICON",
+          "file": "icon.png"
+        },
         {
           "type": "raw",
           "name": "ANALOG",
