@@ -385,6 +385,21 @@ everything for release and then decide.
 
 ![animation04 - quick view](devlog/animation04.mp4)
 
+### 2022.11.20 Sun 22:13 - Publish
+
+Releases in [Rebble Developer Portal][].  I'm done with v1.0.  Time
+for rest but development is not over.  I still want to deliver
+settings page with customization options.
+
+Appstore pages for each platform:
+
+- [pRebble - aplite][]
+- [pRebble - basalt][]
+- [pRebble - chalk][]
+- [pRebble - diorite][]
+
+I will add more details later.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
@@ -402,3 +417,8 @@ everything for release and then decide.
 [Watchface DIGIANA002]: https://www.reddit.com/r/pebble/comments/7eynb0/watchface_of_the_day_pebble_2_minimalistic_mix/
 [Pebble system fonts]: https://developer.rebble.io/developer.pebble.com/guides/app-resources/system-fonts/index.html
 [svg.path CHANGES.txt]: https://github.com/regebro/svg.path/blob/d38002122fb50c63fa4a7e30cc834a60479c766a/CHANGES.txt#L79
+[Rebble Developer Portal]: https://dev-portal.rebble.io/
+[pRebble - aplite]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=aplite
+[pRebble - basalt]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=basalt
+[pRebble - chalk]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=chalk
+[pRebble - diorite]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=diorite
