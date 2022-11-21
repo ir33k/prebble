@@ -91,26 +91,31 @@ hands_layer_update(Layer *layer, GContext *ctx)
 	struct tm *time = localtime(&timestamp);  
 
 	graphics_context_set_antialiased(ctx, true);
-	graphics_context_set_stroke_color(ctx, GColorBlack);
 
 	/* Middle circle. */
 	mid = grect_center_point(&bounds);
 	graphics_context_set_fill_color(ctx, GColorBlack);
 	graphics_fill_circle(ctx, mid, 2);
 
+	/* Minute hand. */
+	inset = grect_inset(bounds, GEdgeInsets(2));
+	angle = DEG_TO_TRIGANGLE(360*time->tm_min/60);
+	point = gpoint_from_polar(inset, GOvalScaleModeFillCircle, angle);
+	graphics_context_set_stroke_color(ctx, GColorWhite);
+	graphics_context_set_stroke_width(ctx, 6);
+	graphics_draw_line(ctx, mid, point);
+	graphics_fill_circle(ctx, point, 2);
+	graphics_context_set_stroke_color(ctx, GColorBlack);
+	graphics_context_set_stroke_width(ctx, 4);
+	graphics_draw_line(ctx, mid, point);
+	graphics_fill_circle(ctx, point, 2);
+
 	/* Hour hand. */
 	inset = grect_inset(bounds, GEdgeInsets(14));
 	angle = DEG_TO_TRIGANGLE(360*(time->tm_hour%12)/12) +
 		DEG_TO_TRIGANGLE(360/12*time->tm_min/60);
 	point = gpoint_from_polar(inset, GOvalScaleModeFitCircle, angle);
-	graphics_context_set_stroke_width(ctx, 4);
-	graphics_draw_line(ctx, mid, point);
-	graphics_fill_circle(ctx, point, 2);
-
-	/* Minute hand. */
-	inset = grect_inset(bounds, GEdgeInsets(3));
-	angle = DEG_TO_TRIGANGLE(360*time->tm_min/60);
-	point = gpoint_from_polar(inset, GOvalScaleModeFillCircle, angle);
+	graphics_context_set_stroke_color(ctx, GColorBlack);
 	graphics_context_set_stroke_width(ctx, 4);
 	graphics_draw_line(ctx, mid, point);
 	graphics_fill_circle(ctx, point, 2);
