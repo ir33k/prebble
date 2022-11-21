@@ -101,7 +101,7 @@ hands_layer_update(Layer *layer, GContext *ctx)
 	/* Hour hand. */
 	inset = grect_inset(bounds, GEdgeInsets(14));
 	angle = DEG_TO_TRIGANGLE(360*(time->tm_hour%12)/12) +
-		DEG_TO_TRIGANGLE(360/24*time->tm_min/60);
+		DEG_TO_TRIGANGLE(360/12*time->tm_min/60);
 	point = gpoint_from_polar(inset, GOvalScaleModeFitCircle, angle);
 	graphics_context_set_stroke_width(ctx, 4);
 	graphics_draw_line(ctx, mid, point);

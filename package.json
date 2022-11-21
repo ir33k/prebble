@@ -1,7 +1,7 @@
 {
   "name": "prebble",
   "author": "irek",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": ["pebble-watchface", "hackathon1", "prebble", "pRebble"],
   "private": false,
   "dependencies": {},
