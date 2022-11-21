@@ -27,12 +27,12 @@ language (UI design and animations).
 
 Rebble prepared convenient "Developer VM" but I would very much prefer
 to have more lightweight setup.  That means installing SDK locally.
-On my Debien 11 with no signs of Python2, which is required, it might
+On my Debian 11 with no signs of Python2, which is required, it might
 be a bit more difficult.  But let's try anyway.
 
 I did followed the official [Pebble SDK installation instruction][].
 But before that I noticed the warning message that Python 2.7 is
-required I have to be able to use pip2.  So I installed few packages
+required to be able to use pip2.  So I installed few packages
 to get proper Python versions and then I followed article called
 [Install pip for Python2.7 in Debian 11 Bullseye][].  Strange
 coincidence that I found help on Emacs user blog and I'm Emacs user as
@@ -116,7 +116,7 @@ by Rebble team.  Let's look for that.
 Yea...  There is this official [Rebble SDK instruction][].  Let's
 quickly install SDK again from proper source.
 
-### 2022.11.06 Sun 19:12 - First first try ^-^
+### 2022.11.06 Sun 19:12 - First try ^-^
 
 Ok, now it should be good.  Rebble version of SDK installed.  Path
 updated.  Python dependencies installed, again.  And from what I see
@@ -319,7 +319,7 @@ failed me for the last time.
 This is insane.  Inkscape rly like to force you to use floats.  And it
 looks like it remembers which point was moved and it will not update
 it position in output file unless you move that specific point.  So
-after manually moving each point back and forward to snap it to pixel
+after manually moving each point back and forth to snap it to pixel
 grid i finally have expected result.  It's perfect!  But I consider
 switching to different tool.  Maybe Figma?
 
