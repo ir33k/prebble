@@ -289,7 +289,7 @@ Ok so I have SVG file.  Now I need to convert it to `.pdc` with
 	    import svg.path
 	ImportError: No module named svg.path
 
-Looks like `svg` module is missing.  I thin I can install it with:
+Looks like `svg` module is missing.  I think I can install it with:
 
 	$ python2 -m pip install svg.path
 	
@@ -350,7 +350,7 @@ Let's try to draw that in watchface.
 
 ### 2022.11.19 Sat 18:12 - It's alive!
 
-It works!  That's great.  Now I need adjust position.
+It works!  That's great.  Now I need to adjust position.
 
 ### 2022.11.19 Sat 18:28
 
