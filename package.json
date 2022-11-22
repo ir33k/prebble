@@ -30,13 +30,8 @@
         },
         {
           "type": "raw",
-          "name": "ANALOG",
-          "file": "analog.pdc"
-        },
-        {
-          "type": "raw",
-          "name": "ANALOG_SEQ",
-          "file": "analog_seq.pdc"
+          "name": "SEQ",
+          "file": "seq.pdc"
         }
       ]
     }

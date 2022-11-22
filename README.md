@@ -71,16 +71,15 @@ and animations).
 Rebble prepared convenient "Developer VM" but I would very much prefer
 to have more lightweight setup.  That means installing SDK locally.
 On my Debian 11 with no signs of Python2, which is required, it might
-be a bit more difficult.  But let's try anyway.
+be a bit more difficult.  Let's try anyway.
 
-I did followed the official [Pebble SDK installation instruction][].
-But before that I noticed the warning message that Python 2.7 is
-required to be able to use pip2.  So I installed few packages
-to get proper Python versions and then I followed article called
-[Install pip for Python2.7 in Debian 11 Bullseye][].  Strange
-coincidence that I found help on Emacs user blog and I'm Emacs user as
-well.  Thanks bro!  Works like a charm.  But I have to remember to use
-`python2 -m pip` instead of `pip` from now on.
+I followed official [Pebble SDK installation instruction][].  But
+before that I noticed warning message that Python 2.7 and pip2 are
+required.  So I installed few packages to get proper Python versions
+and then I followed article called [Install pip for Python2.7 in
+Debian 11 Bullseye][].  Strange coincidence that I found help on Emacs
+user blog and I'm Emacs user too.  Thanks bro!  Works like a charm.
+But I have to remember to use `python2 -m pip` instead of `pip`.
 
 	$ sudo apt install python2
 	$ sudo apt install python2.7
@@ -90,7 +89,7 @@ well.  Thanks bro!  Works like a charm.  But I have to remember to use
 	$ python2 -m pip --version
 	$ python2 -m pip help
 
-Now following the [SDK installation documentation][0] I could do
+Now following the [Pebble SDK installation instruction][] I could do
 everything with few commends modified to fit my pip situation.
 
 	$ cd ~/pebble/pebble-sdk-4.5-linux64
@@ -152,9 +151,9 @@ I think that value of `DOWNLOAD_SERVER` variable might be wrong.
 	class SDKManager(object):
 		DOWNLOAD_SERVER = "https://sdk.getpebble.com"
 
-I think that this is outdated and should be changed to valid Rebble
-URL.  I'm starting to think that there is SDK version already adjusted
-by Rebble team.  Let's look for that.
+This is probably outdated and should be changed to valid Rebble URL.
+I'm starting to think that there is SDK version already adjusted by
+Rebble team.  Let's look for that.
 
 Yea...  There is this official [Rebble SDK instruction][].  Let's
 quickly install SDK again from proper source.
@@ -162,9 +161,9 @@ quickly install SDK again from proper source.
 ### 2022.11.06 Sun 19:12 - First try ^-^
 
 Ok, now it should be good.  Rebble version of SDK installed.  Path
-updated.  Python dependencies installed, again.  And from what I see
-there is no need to do tutorial to verify SDK installation.  There is
-a better way.  All described in Rebble SDK installation instruction.
+updated.  Python dependencies installed, again.  And I see that there
+is no need to do tutorial in order to verify SDK installation.  There
+is a better way.  All described in Rebble SDK installation manual.
 Props for that.
 
 	$ pebble sdk install latest
@@ -175,8 +174,7 @@ Props for that.
 	$ pebble build
 	$ pebble install --emulator basalt
 
-Builds fast, emulation works.  I'm ready!  It wasn't that hard.  Just
-one major mistake with using old Pebble installation manual.
+Builds fast, emulation works.  I'm ready!  It wasn't that hard.
 
 ### 2022.11.06 Sun 23:08 - Another great comment from RebbleOS source
 
@@ -511,6 +509,10 @@ meet design goals but also make it useful for every day usage.  I'm
 using it since first day and it works for me very well.  It rly need
 those customization tho.  It brings watchface to another level when
 you can make it your own.
+
+### 2022.11.22 Tue 20:31 - Hello sequence my old friend
+
+	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py -c 1 -d 12 -o resources/seq.pdc -s src/img/seq
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
