@@ -1,14 +1,54 @@
 pRebble - Pebble REBBLE watchface
 =================================
 
-**Work In Progress**
+Pebble watchface created during [Rebble][] [Hackathon #001][].
+Inspired by Rebble official logo and Pebble visual language (UI design
+and animations).
 
-Pebble watchface created during [Rebble][] [Hackathon #001][].  Idea was
-to have watchface inspired by Rebble official logo and Pebble visual
-language (UI design and animations).
+## Appstore links
 
-![Green version showing animation](devlog/animation03.gif )
-![Quick View example](devlog/animation04.gif )
+- [pRebble - aplite][]
+- [pRebble - basalt][]
+- [pRebble - chalk][]
+- [pRebble - diorite][]
+
+## Features
+
+- Digital and analog time.
+- Support both 24h/12h digital time format.
+- Date (week name, month and day).
+- Compatible with Quick View.
+- Quick animation after each minute.
+- Support works on all pebbles, special care for Pebble Round.
+
+## Screenshots
+
+### Aplite
+
+![aplite](src/img/aplite01.png)
+
+### Basalt
+
+![basalt gif](src/img/basalt.gif)
+![basalt red](src/img/basalt01.png)
+![basalt quick view](src/img/basalt04.png)
+![basalt am pm](src/img/basalt05.png)
+![basalt green](src/img/basalt06.png)
+
+### Chalk
+
+![chalk red](src/img/chalk02.png)
+![chalk green](src/img/chalk01.png)
+
+### Diorite
+
+![diorite](src/img/diorite01.png)
+![diorite quick view](src/img/diorite02.png)
+
+## Recordings of animations
+
+![Green version showing animation](devlog/animation03.gif)
+![Quick View example](devlog/animation04.gif)
 
 ## Icons
 
@@ -18,6 +58,9 @@ language (UI design and animations).
 ![25red](icon/25red.png)
 ![50red](icon/50red.png)
 ![80red](icon/80red.png)
+
+## Rebble emoji for Rebble Discord server
+
 ![emoji128](icon/emoji128.png)
 ![emoji32](icon/emoji32.png)
 
@@ -400,6 +443,65 @@ Appstore pages for each platform:
 
 I will add more details later.
 
+### 2022.11.21 Mon 22:39 - After release and plans for future
+
+Ok so everything went smoothly except that today I found bug.  Hour
+analog clock hand was a bit off.  For example when time was 13:50
+clock hour hand should already point more at 14:00 than 13:00 but it
+wasn't.  It was a small silly mistake in code.  Fixed quickly and
+watchface was updated with version 1.1.
+
+Right after that I added watchface menu icon.  Finally!  I had it from
+the beginning but since I didn't know how to add it i skipped it for
+version 1.0 because I thought this will be more involve.  It was
+actually pretty easy.  I actually learned how to do it from other
+awesome project, [Watchface Pixel by phoeniix][].  He had separate
+commit [Add menu item commit][] for that.
+
+![pRebble menu icon](devlog/pic03.jpeg)
+
+Then I acknowledge problem with analog clock minute hand.  It was
+overlapping with analog clock arrows at 2 specific points and it looks
+very strange.  I fixed it quickly by adding white border around minute
+hand.  This was achieved by drawing white thicker line under actual
+black minute hand line.
+
+### 2022.11.22 Tue 04:13 - So now what?
+
+Topics on Rebble Discord channel related to Hackathon are archived.  I
+will continue my work on this watchface.  I rly want to add few things
+that I planned from the start and some more.
+
+But before that I'm doing some cleaning.  Starting with [design.svg][]
+file.  Whole design process is now visible on the page.  Previously
+only chosen designs where visible and everything else was outsize the
+page.  Now it's easier to look at all that mess.  I also defined tags
+in this repository so it's easy to jump to specific version.  This
+file was cleaned up as well.  Top section is now more presentable and
+it doesn't make first impression of project being WIP.
+
+And the plan for version 2.0 is to add settings page using
+[pebble-clay][] with features:
+
+- Custom background color.
+- Possibility to have background color that reflects battery level.
+  On color screen from green, to orange and red.  On black and white
+  from white to gray to black.
+- Custom patter.  I want to make patter optional.  And when enabled
+  then you can chose one of patterns.  For now we have only black
+  lines.  But I already experimented with dots in [design.svg][].  And
+  I have few other ideas.  Color for patter can also by custom.
+- Show Bluetooth connection by hiding patter.  So when patter is
+  defined it can be hidden when connection with phone is lost.
+- Vibrate when Bluetooth connection change.
+- Vibrate on each hour.
+
+I like how with background I can squeeze extra features and keep
+watchface as clean as it is now.  I would rly like to add weather as
+well.  But I have no idea how to do that yet.  Some watchfaces shows
+extra stuff on shake.  I don't like that.  So I don't know how to do
+it yet.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
@@ -422,3 +524,7 @@ I will add more details later.
 [pRebble - basalt]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=basalt
 [pRebble - chalk]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=chalk
 [pRebble - diorite]: https://apps.rebble.io/en_US/application/637aa98bfdf3e30009f6398f?hardware=diorite
+[Watchface Pixel by phoeniix]: https://github.com/not-phoeniix/pixel/
+[Add menu item commit]: https://github.com/not-phoeniix/pixel/commit/e80c8b0e012b7a8da5929d6819782f432a1b697e
+[design.svg]: src/img/design.svg
+[pebble-clay]: https://github.com/pebble/clay
