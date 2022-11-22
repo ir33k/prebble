@@ -502,6 +502,14 @@ well.  But I have no idea how to do that yet.  Some watchfaces shows
 extra stuff on shake.  I don't like that.  So I don't know how to do
 it yet.
 
+### 2022.11.22 Tue 04:46 - Appstore stars
+
+Watchface already has 12 stars in Appstore O_O.  This is super
+awesome!  I'm happy that people like it as I rly tried to not only
+meet design goals but also make it useful for every day usage.  I'm
+using it since first day and it works for me very well.  It rly need
+those customization tho.  It brings watchface to another level when
+you can make it your own.
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
