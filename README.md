@@ -495,6 +495,7 @@ And the plan for version 2.0 is to add settings page using
   defined it can be hidden when connection with phone is lost.
 - Vibrate when Bluetooth connection change.
 - Vibrate on each hour.
+- Custom date format.
 
 I like how with background I can squeeze extra features and keep
 watchface as clean as it is now.  I would rly like to add weather as
