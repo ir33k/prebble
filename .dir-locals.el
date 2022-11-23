@@ -1,2 +1,5 @@
 ((c-mode . ((c-file-style . "linux")))
- (js-json-mode . ((js-indent-level . 2))))
+ (js-mode . ((indent-tabs-mode . nil)
+	     (js-indent-level . 2)))
+ (js-json-mode . ((indent-tabs-mode . nil)
+		  (js-indent-level . 2))))

@@ -2,3 +2,4 @@ build
 .lock*
 *.*~
 TAGS
+node_modules
