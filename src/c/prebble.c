@@ -1,5 +1,12 @@
 #include <pebble.h>
 
+#define CONF_KEY    1		// Config persist storage key
+
+// Defaults
+#define BGCOLOR     PBL_IF_BW_ELSE(GColorLightGray, GColorRed)
+#define FGCOLOR     GColorBlack;
+#define DATEFMT     PBL_IF_ROUND_ELSE("%a %m.%d", "%A %m.%d")
+
 static Window      *s_win;           // Main window
 static Layer       *s_bg_layer;      // Background for color & pattern
 
@@ -18,6 +25,47 @@ static uint32_t     s_seqc;          // Seq frames count
 static uint32_t     s_seqi;          // Seq animation index
 static Layer       *s_hands_layer;   // Analog watch hands
 
+enum bg {
+	BG_NUL = 0,		// No background, results in white
+	BG_PLAIN,		// Use plain background color
+	BG_BATT			// Color depends on battery level
+};
+enum fg {
+	FG_NUL = 0,		// No foreground pattern
+	FG_LINES,		// Use lines pattern
+	FG_DOTS			// Use dots pattern
+};
+enum vibe {
+	VIBE_NUL = 0,		// No vibrations
+	VIBE_SHORT,		// Short pulse
+	VIBE_LONG,		// Long pulse
+	VIBE_DOUBLE		// Double pulse
+};
+
+// Config AKA settings
+static struct {
+	enum bg     bg_type;
+	GColor      bg_color;
+	enum fg     fg_type;	// Foregroud AKA background pattern
+	GColor      fg_color;
+	bool        fg_bt;	// Hide pattern on BT disconnect
+	enum vibe   vibe_bt;	// Vibration on BT disconnect
+	enum vibe   vibe_h;	// Vibration on each hour
+	char        date[16];	// Date format
+} s_conf;
+
+// Vibrate using one of predefined patterns.
+static void
+vibe(enum vibe v)
+{
+	switch (v) {
+	case VIBE_SHORT:  vibes_short_pulse();  break;
+	case VIBE_LONG:   vibes_long_pulse();   break;
+	case VIBE_DOUBLE: vibes_double_pulse(); break;
+	case VIBE_NUL:    break;
+	}
+}
+
 // Draw patter of 45 deg diagonal lines of given COLOR with CTX in
 // RECT area.
 static void
@@ -31,7 +79,7 @@ draw_pattern_lines(GContext *ctx, GRect rect, GColor color)
 	// analog clock image diagonal lines which makes them look
 	// thicker than they are on Aplite gray background.
 	int16_t y, x = rect.origin.x;
-	int16_t gap = 28;
+	uint16_t gap = 28;
 	int16_t beg = rect.origin.y - gap*(rect.size.w/gap) + 16;
 	int16_t end = rect.origin.y + rect.size.h;
 	GPoint p1, p2;
@@ -46,19 +94,48 @@ draw_pattern_lines(GContext *ctx, GRect rect, GColor color)
 	}
 }
 
+// Draw patter of small dots of given COLOR with CTX in RECT area.
+static void
+draw_pattern_dots(GContext *ctx, GRect rect, GColor color)
+{
+	int32_t x, y;
+	uint16_t gap = rect.size.w / 7;
+
+	for (x = rect.origin.x + gap/2; x < rect.size.w; x += gap) {
+		for (y = rect.origin.y + gap/2; y < rect.size.h; y += gap) {
+			graphics_context_set_fill_color(ctx, color);
+			graphics_fill_circle(ctx, GPoint(x, y), 1);
+		}
+	}
+}
+
 static void
 text_layer_update(Layer *layer, GContext *ctx)
 {
 	GRect bounds = layer_get_bounds(layer);
 
-	graphics_context_set_fill_color(ctx, GColorWhite);
 #ifdef PBL_RECT
+	// In case of white background we want to have black outline
+	// around text_layer to separate it from background.
+	if (gcolor_equal(s_conf.bg_color, GColorWhite)) {
+		graphics_context_set_fill_color(ctx, GColorBlack);
+		graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
+		bounds.origin.y += 1;
+	}
+	graphics_context_set_fill_color(ctx, GColorWhite);
 	graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
 #else
-	graphics_fill_circle(ctx,
-			     GPoint(bounds.origin.x + bounds.size.w/2,
-				    bounds.origin.y + bounds.size.h),
-			     bounds.size.h);
+	GPoint center = GPoint(bounds.origin.x + bounds.size.w/2,
+			       bounds.origin.y + bounds.size.h);
+	graphics_context_set_fill_color(ctx, GColorWhite);
+	graphics_fill_circle(ctx, center, bounds.size.h-1);
+	// In case of white background we want to have black outline
+	// around text_layer to separate it from background.
+	if (gcolor_equal(s_conf.bg_color, GColorWhite)) {
+		graphics_context_set_stroke_color(ctx, GColorBlack);
+		graphics_context_set_stroke_width(ctx, 1);
+		graphics_draw_circle(ctx, center, bounds.size.h);
+	}
 #endif
 }
 
@@ -132,15 +209,24 @@ hands_layer_update(Layer *layer, GContext *ctx)
 }
 
 static void
-bg_main_layer_update(Layer *layer, GContext *ctx)
+bg_layer_update(Layer *layer, GContext *ctx)
 {
 	GRect bounds = layer_get_bounds(layer);
-	GColor bg_color = PBL_IF_BW_ELSE(GColorLightGray, GColorRed);
-	GColor fg_color = GColorBlack;
 
-	graphics_context_set_fill_color(ctx, bg_color);
+	graphics_context_set_fill_color(ctx, s_conf.bg_color);
 	graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-	draw_pattern_lines(ctx, bounds, fg_color);
+	if (!s_conf.fg_bt || connection_service_peek_pebble_app_connection()) {
+		switch (s_conf.fg_type) {
+		case FG_LINES:
+			draw_pattern_lines(ctx, bounds, s_conf.fg_color);
+			break;
+		case FG_DOTS:
+			draw_pattern_dots(ctx, bounds, s_conf.fg_color);
+			break;
+		case FG_NUL:
+			break;
+		}
+	}
 }
 
 static void
@@ -157,9 +243,8 @@ static void
 date_set(struct tm *time)
 {
 	static char buf[16];
-	const char *fmt = PBL_IF_ROUND_ELSE("%a %m.%d", "%A %m.%d");
 
-	strftime(buf, sizeof(buf), fmt, time);
+	strftime(buf, sizeof(buf), s_conf.date, time);
 	text_layer_set_text(s_date_layer, buf);
 }
 
@@ -192,21 +277,6 @@ anim_slideup(Layer *layer, GRect beg, uint32_t delay, uint32_t duration)
 	animation_schedule(anim);
 }
 
-
-// TickHandler that runs after each minute.
-static void
-onmin(struct tm *time, TimeUnits change)
-{
-	if (change & DAY_UNIT) {
-		date_set(time);
-	}
-	if (change & MINUTE_UNIT) {
-		seq_anim(NULL);
-	}
-	time_set(time);
-	layer_mark_dirty(s_hands_layer);
-}
-
 static void
 win_load(Window *win)
 {
@@ -219,7 +289,7 @@ win_load(Window *win)
 	// Main background.
 	rect = bounds;
 	s_bg_layer = layer_create(rect);
-	layer_set_update_proc(s_bg_layer, bg_main_layer_update);
+	layer_set_update_proc(s_bg_layer, bg_layer_update);
 	layer_add_child(layer, s_bg_layer);
 
 	// Text background for time and date.
@@ -292,6 +362,158 @@ win_unload(Window *_win)
 	text_layer_destroy(s_date_layer);
 }
 
+// Handle Bluetooth state change.
+static void
+bluetooth(bool _connected)
+{
+	layer_mark_dirty(s_bg_layer);
+	vibe(s_conf.vibe_bt);
+}
+
+// Handle battery state change
+static void
+battery(BatteryChargeState state)
+{
+#ifdef PBL_BW
+	if (state.charge_percent > 30) {
+		s_conf.bg_color = GColorLightGray;
+	} else {
+		s_conf.bg_color = GColorWhite;
+	}
+#else
+	if (state.charge_percent > 60) {
+		s_conf.bg_color = GColorIslamicGreen;
+	} else if (state.charge_percent > 30) {
+		s_conf.bg_color = GColorCobaltBlue;
+	} else {
+		s_conf.bg_color = GColorRed;
+	}
+#endif
+	layer_mark_dirty(s_bg_layer);
+	layer_mark_dirty(s_text_layer);
+}
+
+
+// TickHandler, runs on each minute.
+static void
+onmin(struct tm *time, TimeUnits change)
+{
+	if (change & MINUTE_UNIT) {
+		seq_anim(NULL);
+	}
+	if (change & HOUR_UNIT) {
+		vibe(s_conf.vibe_h);
+	}
+	if (change & DAY_UNIT) {
+		date_set(time);
+	}
+	time_set(time);
+	layer_mark_dirty(s_hands_layer);
+}
+
+static void
+conf_load(void)
+{
+	// Apply defaults first then load old values if possible.
+	s_conf.bg_type  = BG_PLAIN;
+	s_conf.bg_color = BGCOLOR;
+	s_conf.fg_type  = FG_LINES;
+	s_conf.fg_color = FGCOLOR;
+	s_conf.fg_bt    = true;
+	s_conf.vibe_bt  = VIBE_NUL;
+	s_conf.vibe_h   = VIBE_NUL;
+	strcpy(s_conf.date, DATEFMT);
+	persist_read_data(CONF_KEY, &s_conf, sizeof(s_conf));
+}
+
+static void
+conf_save(void)
+{
+	persist_write_data(CONF_KEY, &s_conf, sizeof(s_conf));
+}
+
+static void
+conf_apply(void)
+{
+	switch (s_conf.bg_type) {
+	case BG_PLAIN:
+		// Do nothing
+		break;
+	case BG_BATT:
+		// TODO
+		break;
+	case BG_NUL:
+		s_conf.bg_color = GColorWhite;
+		break;
+	default:
+		s_conf.bg_color = GColorRed;
+	}
+
+	switch (s_conf.fg_type) {
+	case FG_LINES:
+	case FG_DOTS:
+		// Do nothing
+		break;
+	case FG_NUL:
+		s_conf.fg_color = GColorClear;
+		break;
+	default:
+		s_conf.fg_color = GColorBlack;
+	}
+
+	if (s_conf.bg_type == BG_BATT) {
+		battery_state_service_subscribe(battery);
+		battery(battery_state_service_peek());
+	} else {
+		battery_state_service_unsubscribe();
+	}
+
+	// Redraw layers.
+	layer_mark_dirty(s_bg_layer);
+	layer_mark_dirty(s_text_layer);
+
+	// Force date update.
+	time_t timestamp = time(NULL);
+	onmin(localtime(&timestamp), DAY_UNIT);
+}
+
+static void
+conf_onmsg(DictionaryIterator *di, void *_ctx)
+{
+	Tuple *tuple;
+
+	tuple = dict_find(di, MESSAGE_KEY_BGTYPE);
+	s_conf.bg_type = tuple ? atoi(tuple->value->cstring) : -1;
+
+	tuple = dict_find(di, MESSAGE_KEY_BGCOLOR);
+	s_conf.bg_color = tuple ? GColorFromHEX(tuple->value->int32) : BGCOLOR;
+
+	tuple = dict_find(di, MESSAGE_KEY_FGTYPE);
+	s_conf.fg_type = tuple ? atoi(tuple->value->cstring) : -1;
+
+	tuple = dict_find(di, MESSAGE_KEY_FGCOLOR);
+	s_conf.fg_color = tuple ? GColorFromHEX(tuple->value->int32) : FGCOLOR;
+
+	tuple = dict_find(di, MESSAGE_KEY_FGBT);
+	s_conf.fg_bt = tuple ? tuple->value->int8 : true;
+
+	tuple = dict_find(di, MESSAGE_KEY_VIBEBT);
+	s_conf.vibe_bt = tuple ? atoi(tuple->value->cstring) : -1;
+
+	tuple = dict_find(di, MESSAGE_KEY_VIBEH);
+	s_conf.vibe_h = tuple ? atoi(tuple->value->cstring) : -1;
+
+	if ((tuple = dict_find(di, MESSAGE_KEY_DATE))) {
+		strcpy(s_conf.date,
+		       strlen(tuple->value->cstring) ?
+		       tuple->value->cstring :
+		       DATEFMT);
+	}
+
+	conf_save();
+	conf_apply();
+}
+
 int
 main(void)
 {
@@ -321,6 +543,15 @@ main(void)
 	onmin(localtime(&timestamp), DAY_UNIT);
 	tick_timer_service_subscribe(MINUTE_UNIT, onmin);
 
+	// Conf (watchface settings page) init and setup.
+	conf_load();
+	conf_apply();
+	app_message_register_inbox_received(conf_onmsg);
+	app_message_open(dict_calc_buffer_size(8, 16), 0);
+
+	// Bluetooth.
+	connection_service_subscribe((ConnectionHandlers) { bluetooth, 0 });
+	
 	// Watchface event loop.
 	app_event_loop();
 

@@ -513,6 +513,20 @@ you can make it your own.
 ### 2022.11.22 Tue 20:31 - Hello sequence my old friend
 
 	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py -c 1 -d 12 -o resources/seq.pdc -s src/img/seq
+	
+
+### 2022.11.23 Wed 22:38 - Ideas
+
+Change background color, pattern type and pattern color randomly on
+each hour or each shake.
+
+### 2022.11.24 Thu 03:58 - Settings
+
+It took a while but I have it.  Settings panel with everything that I
+listed earlier.  Yes!  Everything.  That was one long coding night
+session.  Now for the release of v2.0.  I need to prepare new
+screenshots and gif.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
