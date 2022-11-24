@@ -522,10 +522,15 @@ each hour or each shake.
 
 ### 2022.11.24 Thu 03:58 - Settings
 
-It took a while but I have it.  Settings panel with everything that I
-listed earlier.  Yes!  Everything.  That was one long coding night
-session.  Now for the release of v2.0.  I need to prepare new
-screenshots and gif.
+It took a while, actually the whole night of programming.  But I did
+it.  I have settings panel with everything that I listed earlier.
+Yes, everything!  Now for the release of v2.0.  I need to prepare new
+screenshots and gif.  I don't have a strength for that tho.  So I just
+released new version with change log new description and that's it for
+today.  I'm not expecting to do much more.  Probably 2 or 3 new
+background patterns, new screenshots for store and potential bug fixes
+and some refactor but nothing major.  Everything seems to be working
+fine and I have all the features that I wanted.
 
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
