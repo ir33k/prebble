@@ -21,6 +21,19 @@ and animations).
 - Quick animation after each minute.
 - Support works on all pebbles, special care for Pebble Round.
 
+## Settings
+
+- Custom background color.
+- Background color can show battery status, green up to 60%, blue up
+  to 30% and red below that. On black and white screens it's gray up
+  to 30%, then white.
+- Custom background patterns. Only 2 for now.
+- Custom pattern color.
+- Hide pattern color on Bluetooth disconnect.
+- Vibrations on Bluetooth connection change.
+- Vibrations on each hour.
+- Custom date formats.
+
 ## Screenshots
 
 ### Aplite
