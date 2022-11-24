@@ -1,7 +1,6 @@
 #include <pebble.h>
 
-// Constants
-#define CONF_KEY    1
+#define CONF_KEY    1		// Config persist storage key
 
 // Defaults
 #define BGCOLOR     PBL_IF_BW_ELSE(GColorLightGray, GColorRed)
@@ -47,7 +46,7 @@ enum vibe {
 static struct {
 	enum bg     bg_type;
 	GColor      bg_color;
-	enum fg     fg_type;
+	enum fg     fg_type;	// Foregroud AKA background pattern
 	GColor      fg_color;
 	bool        fg_bt;	// Hide pattern on BT disconnect
 	enum vibe   vibe_bt;	// Vibration on BT disconnect
@@ -347,6 +346,30 @@ bluetooth(bool _connected)
 	vibe(s_conf.vibe_bt);
 }
 
+// Handle battery state change
+static void
+battery(BatteryChargeState state)
+{
+#ifdef PBL_BW
+	if (state.charge_percent > 30) {
+		s_conf.bg_color = GColorLightGray;
+	} else {
+		s_conf.bg_color = GColorWhite;
+	}
+#else
+	if (state.charge_percent > 60) {
+		s_conf.bg_color = GColorIslamicGreen;
+	} else if (state.charge_percent > 30) {
+		s_conf.bg_color = GColorCobaltBlue;
+	} else {
+		s_conf.bg_color = GColorRed;
+	}
+#endif
+	layer_mark_dirty(s_bg_layer);
+	layer_mark_dirty(s_text_layer);
+}
+
+
 // TickHandler, runs on each minute.
 static void
 onmin(struct tm *time, TimeUnits change)
@@ -412,6 +435,13 @@ conf_apply(void)
 		break;
 	default:
 		s_conf.fg_color = GColorBlack;
+	}
+
+	if (s_conf.bg_type == BG_BATT) {
+		battery_state_service_subscribe(battery);
+		battery(battery_state_service_peek());
+	} else {
+		battery_state_service_unsubscribe();
 	}
 
 	// Redraw layers.
@@ -495,7 +525,7 @@ main(void)
 	app_message_register_inbox_received(conf_onmsg);
 	app_message_open(dict_calc_buffer_size(8, 16), 0);
 
-	// Bluetooth
+	// Bluetooth.
 	connection_service_subscribe((ConnectionHandlers) { bluetooth, 0 });
 	
 	// Watchface event loop.

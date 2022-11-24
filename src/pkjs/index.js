@@ -34,8 +34,7 @@ new Clay([
         "type": "color",
         "messageKey": "BGCOLOR",
         "label": "Color",
-        "allowGray": true,
-        "capabilities": ["COLOR"]
+        "allowGray": true
       }
     ]
   },
