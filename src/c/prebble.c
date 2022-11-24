@@ -79,7 +79,7 @@ draw_pattern_lines(GContext *ctx, GRect rect, GColor color)
 	// analog clock image diagonal lines which makes them look
 	// thicker than they are on Aplite gray background.
 	int16_t y, x = rect.origin.x;
-	int16_t gap = 28;
+	uint16_t gap = 28;
 	int16_t beg = rect.origin.y - gap*(rect.size.w/gap) + 16;
 	int16_t end = rect.origin.y + rect.size.h;
 	GPoint p1, p2;
@@ -91,6 +91,21 @@ draw_pattern_lines(GContext *ctx, GRect rect, GColor color)
 		p1 = GPoint(x, y);
 		p2 = GPoint(x + rect.size.w, y + rect.size.w);
 		graphics_draw_line(ctx, p1, p2);
+	}
+}
+
+// Draw patter of small dots of given COLOR with CTX in RECT area.
+static void
+draw_pattern_dots(GContext *ctx, GRect rect, GColor color)
+{
+	int32_t x, y;
+	uint16_t gap = rect.size.w / 7;
+
+	for (x = rect.origin.x + gap/2; x < rect.size.w; x += gap) {
+		for (y = rect.origin.y + gap/2; y < rect.size.h; y += gap) {
+			graphics_context_set_fill_color(ctx, color);
+			graphics_fill_circle(ctx, GPoint(x, y), 1);
+		}
 	}
 }
 
@@ -201,7 +216,16 @@ bg_layer_update(Layer *layer, GContext *ctx)
 	graphics_context_set_fill_color(ctx, s_conf.bg_color);
 	graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 	if (!s_conf.fg_bt || connection_service_peek_pebble_app_connection()) {
-		draw_pattern_lines(ctx, bounds, s_conf.fg_color);
+		switch (s_conf.fg_type) {
+		case FG_LINES:
+			draw_pattern_lines(ctx, bounds, s_conf.fg_color);
+			break;
+		case FG_DOTS:
+			draw_pattern_dots(ctx, bounds, s_conf.fg_color);
+			break;
+		case FG_NUL:
+			break;
+		}
 	}
 }
 
