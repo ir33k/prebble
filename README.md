@@ -527,7 +527,6 @@ you can make it your own.
 
 	$ python2 /home/irek/pebble/cards-example/tools/svg2pdc.py -c 1 -d 12 -o resources/seq.pdc -s src/img/seq
 	
-
 ### 2022.11.23 Wed 22:38 - Ideas
 
 Change background color, pattern type and pattern color randomly on
@@ -544,6 +543,35 @@ today.  I'm not expecting to do much more.  Probably 2 or 3 new
 background patterns, new screenshots for store and potential bug fixes
 and some refactor but nothing major.  Everything seems to be working
 fine and I have all the features that I wanted.
+
+### 2022.11.27 Sun 22:52 - Polish
+
+Already 21 likes in appstore.  This motivates me to polish watchface
+even more.
+
+For example I should expand Clay settings page so it describe some of
+the options right there on settings page.  Like background that shows
+battery level.  This should be explained right there along with image
+showing which color corresponds to which battery charge level.
+
+I can add more patterns.  I was thinking about making something that
+works better on Pebble round.  And like text area with digital time
+and date, pattern could have subtle animation.
+
+Topic of animation reminds me of initial idea of creating custom
+animation curve function.  I never got back to it.  Current slide up
+animation is fine but since the beginning I wanted to have a little
+bounce at the end.  Similar to what arrows do after they go around
+analog clock.
+
+I can polish the appstore watchface page itself by adding banner
+image, updating gif and screenshots.
+
+Code is already in pretty good shape but this OFC can always be
+improved.
+
+So there are many areas that can be polished.  I think I will be able
+to do some of them in upcoming week.
 
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
