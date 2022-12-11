@@ -125,11 +125,11 @@ new Clay([
         "options": [
           { "value": "",         "label": "Default" },
           { "value": "%A %m.%d", "label": "Sunday 11.18" },
-          { "value": "%a %m.%d", "label": "Su 11.18" },
+          { "value": "%a %m.%d", "label": "Sun 11.18" },
           { "value": "%B %d",    "label": "November 18" },
           { "value": "%b %d",    "label": "Nov 18" },
           { "value": "%A %d",    "label": "Sunday 18" },
-          { "value": "%a %d",    "label": "Su 18" },
+          { "value": "%a %d",    "label": "Sun 18" },
           { "value": "%Y.%m.%d", "label": "2022.11.18" },
           { "value": "%d.%m.%Y", "label": "18.11.2022" },
           { "value": "%m.%d.%Y", "label": "11.18.2022" }
