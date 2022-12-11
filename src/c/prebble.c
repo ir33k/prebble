@@ -497,8 +497,7 @@ conf_onmsg(DictionaryIterator *di, void *ctx)
 	if ((tuple = dict_find(di, MESSAGE_KEY_VIBEH))) {
 		conf->vibe_h = atoi(tuple->value->cstring);
 	}
-	if ((tuple = dict_find(di, MESSAGE_KEY_DATE)) &&
-	    strlen(tuple->value->cstring)) {
+	if ((tuple = dict_find(di, MESSAGE_KEY_DATE))) {
 		strcpy(conf->date, tuple->value->cstring);
 	}
 	conf_save(conf);
