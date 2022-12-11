@@ -1,6 +1,5 @@
 #include <pebble.h>
 
-// TODO(irek): Add desciptions of chosen options in clay settings.
 // TODO(irek): New gif and images in store.
 
 #define CONF_KEY    1           // Clay config persist storage key

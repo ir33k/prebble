@@ -31,11 +31,21 @@ new Clay([
         ]
       },
       {
+        "id": "bgtype-none-text",
+        "type": "text",
+        "defaultValue": "Background disabled. It will be white."
+      },
+      {
         "type": "color",
         "messageKey": "BGCOLOR",
         "label": "Color",
         "allowGray": true
-      }
+      },
+      {
+        "id": "bgtype-battery-text",
+        "type": "text",
+        "defaultValue": "Background color will reflect battery charge level."
+      },
     ]
   },
   {
@@ -125,27 +135,40 @@ new Clay([
     "defaultValue": "Save"
   }
 ], function () {
-  // Disable DEST item when SRC item value is one of VALUES.
-  function disableOnChange(src, dest, values) {
-    function handle() {
-      dest[values.indexOf(src.get()) === -1 ? "enable" : "disable"]()
-    }
-    handle()
-    src.on('change', handle)
+  // Call CB function right away and on event NAME of EL item.
+  function on(el, name, cb) {
+    cb()
+    el.on(name, cb)
+  }
+  // Hide DEST item when SRC item value is one of VALUES.
+  function hideOnValue(src, dest, values) {
+    on(src, "change", function () {
+      dest[values.indexOf(src.get()) === -1 ? "show" : "hide"]()
+    })
   }
 
   this.on(this.EVENTS.AFTER_BUILD, function () {
-    disableOnChange(
+    hideOnValue(
+      this.getItemByMessageKey('BGTYPE'),
+      this.getItemById('bgtype-none-text'),
+      ["1", "2"]
+    )
+    hideOnValue(
       this.getItemByMessageKey('BGTYPE'),
       this.getItemByMessageKey('BGCOLOR'),
       ["0", "2"]
     )
-    disableOnChange(
+    hideOnValue(
+      this.getItemByMessageKey('BGTYPE'),
+      this.getItemById('bgtype-battery-text'),
+      ["0", "1"]
+    )
+    hideOnValue(
       this.getItemByMessageKey('FGTYPE'),
       this.getItemByMessageKey('FGCOLOR'),
       ["0"]
     )
-    disableOnChange(
+    hideOnValue(
       this.getItemByMessageKey('FGTYPE'),
       this.getItemByMessageKey('FGBT'),
       ["0"]
