@@ -21,12 +21,14 @@ enum vibe {                     // Possible vibrations
 	VIBE_DOUBLE             // Double pulse
 };
 struct clay {                   // Struct for all Clay settings
+	// TODO(irek): Add dithering type.
 	enum bg     bg_type;    // Background type
 	GColor      bg_color;   // Background color
 	enum fg     fg_type;    // Foregroud AKA background pattern
 	GColor      fg_color;   // Foreground color
 	bool        fg_bt;      // Hide pattern on BT disconnect
-	enum vibe   vibe_bt;    // Vibration on BT disconnect
+	enum vibe   vibe_bt0;   // Vibration when BT disconnect
+	enum vibe   vibe_bt1;   // Vibration when BT connect
 	enum vibe   vibe_h;     // Vibration on each hour
 	char        date[16];   // Date format
 };
@@ -349,10 +351,10 @@ win_unload(Window *_win)
 
 // Handle Bluetooth state change.
 static void
-bluetooth(bool _connected)
+bluetooth(bool connected)
 {
 	layer_mark_dirty(s_bg);
-	vibe(s_conf.vibe_bt);
+	vibe(connected ? s_conf.vibe_bt1 : s_conf.vibe_bt0);
 }
 
 // Handle battery state change.  Used when s_conf.bg_type is set to
@@ -410,7 +412,8 @@ conf_load(struct clay *conf)
 	conf->fg_type  = FG_LINES;
 	conf->fg_color = GColorBlack;
 	conf->fg_bt    = true;
-	conf->vibe_bt  = VIBE_NUL;
+	conf->vibe_bt0 = VIBE_NUL;
+	conf->vibe_bt1 = VIBE_NUL;
 	conf->vibe_h   = VIBE_NUL;
 	conf->date[0]  = 0;     // Empty string force default format
 	persist_read_data(CONF_KEY, conf, sizeof(struct clay));
@@ -442,7 +445,9 @@ conf_apply(struct clay *conf)
 	}
 
 	// React to Bluetooth connection changes only if necessary.
-	if (conf->fg_bt || conf->vibe_bt) {
+	// That is one of options required Bluetooth connection
+	// information is used.
+	if (conf->fg_bt || conf->vibe_bt0 || conf->vibe_bt1) {
 		connection_service_subscribe((ConnectionHandlers) { bluetooth, 0 });
 	} else {
 		connection_service_unsubscribe();
@@ -483,8 +488,11 @@ conf_onmsg(DictionaryIterator *di, void *ctx)
 	if ((tuple = dict_find(di, MESSAGE_KEY_FGBT))) {
 		conf->fg_bt = tuple->value->int8;
 	}
-	if ((tuple = dict_find(di, MESSAGE_KEY_VIBEBT))) {
-		conf->vibe_bt = atoi(tuple->value->cstring);
+	if ((tuple = dict_find(di, MESSAGE_KEY_VIBEBT0))) {
+		conf->vibe_bt0 = atoi(tuple->value->cstring);
+	}
+	if ((tuple = dict_find(di, MESSAGE_KEY_VIBEBT1))) {
+		conf->vibe_bt1 = atoi(tuple->value->cstring);
 	}
 	if ((tuple = dict_find(di, MESSAGE_KEY_VIBEH))) {
 		conf->vibe_h = atoi(tuple->value->cstring);

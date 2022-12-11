@@ -32,7 +32,8 @@
       "FGTYPE",
       "FGCOLOR",
       "FGBT",
-      "VIBEBT",
+      "VIBEBT0",
+      "VIBEBT1",
       "VIBEH",
       "DATE"
     ],

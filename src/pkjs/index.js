@@ -89,8 +89,15 @@ new Clay([
       },
       {
         "type": "select",
-        "messageKey": "VIBEBT",
-        "label": "Bluetooth connection",
+        "messageKey": "VIBEBT0",
+        "label": "Bluetooth disconnected",
+        "defaultValue": 0,
+        "options": vibs
+      },
+      {
+        "type": "select",
+        "messageKey": "VIBEBT1",
+        "label": "Bluetooth connected",
         "defaultValue": 0,
         "options": vibs
       },
