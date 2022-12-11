@@ -3,47 +3,47 @@
 // TODO(irek): Add desciptions of chosen options in clay settings.
 // TODO(irek): New gif and images in store.
 
-#define CONF_KEY    1		// Clay config persist storage key
+#define CONF_KEY    1           // Clay config persist storage key
 
-enum bg {
-	BG_NUL = 0,		// No background, results in white
-	BG_PLAIN,		// Use plain background color
-	BG_BATT			// Color depends on battery level
+enum bg {                       // Possible background types
+	BG_NUL = 0,             // No background, results in white
+	BG_PLAIN,               // Use plain background color
+	BG_BATT                 // Color depends on battery level
 };
-enum fg {
-	FG_NUL = 0,		// No foreground pattern
-	FG_LINES,		// Use lines pattern
-	FG_DOTS			// Use dots pattern
+enum fg {                       // Background pattern AKA foreground
+	FG_NUL = 0,             // No foreground pattern
+	FG_LINES,               // Use lines pattern
+	FG_DOTS                 // Use dots pattern
 };
-enum vibe {
-	VIBE_NUL = 0,		// No vibrations
-	VIBE_SHORT,		// Short pulse
-	VIBE_LONG,		// Long pulse
-	VIBE_DOUBLE		// Double pulse
+enum vibe {                     // Possible vibrations
+	VIBE_NUL = 0,           // No vibrations
+	VIBE_SHORT,             // Short pulse
+	VIBE_LONG,              // Long pulse
+	VIBE_DOUBLE             // Double pulse
 };
-struct clay {
-	enum bg     bg_type;	// Background type
-	GColor      bg_color;	// Background color
-	enum fg     fg_type;	// Foregroud AKA background pattern
-	GColor      fg_color;	// Foreground color
-	bool        fg_bt;	// Hide pattern on BT disconnect
-	enum vibe   vibe_bt;	// Vibration on BT disconnect
-	enum vibe   vibe_h;	// Vibration on each hour
-	char        date[16];	// Date format
+struct clay {                   // Struct for all Clay settings
+	enum bg     bg_type;    // Background type
+	GColor      bg_color;   // Background color
+	enum fg     fg_type;    // Foregroud AKA background pattern
+	GColor      fg_color;   // Foreground color
+	bool        fg_bt;      // Hide pattern on BT disconnect
+	enum vibe   vibe_bt;    // Vibration on BT disconnect
+	enum vibe   vibe_h;     // Vibration on each hour
+	char        date[16];   // Date format
 };
 
-static bool         s_24h;	// True when 24h, false when 12h
-static Layer       *s_bg;	// Background for color & pattern
-static Layer       *s_text;	// Background of time & date
-static TextLayer   *s_time;	// Digital time
-static TextLayer   *s_date;
+static bool         s_24h;      // True when 24h, false when 12h
+static Layer       *s_bg;       // Background for color & pattern
+static Layer       *s_text;     // Background of time & date
+static TextLayer   *s_time;     // Digital time
+static TextLayer   *s_date;     // Date below digital time
 static GFont        s_font[2];  // Time and date fonts
-static Layer       *s_analog;	// Analog sequence animation
+static Layer       *s_analog;   // Analog sequence animation
 static GDrawCommandSequence *s_seqv; // Sequence value, image frames
 static uint32_t     s_seqc;     // Seq frames count
 static uint32_t     s_seqi;     // Seq animation index
-static Layer       *s_hands;	// Analog watch hands
-static struct clay  s_conf;	// Configuration AKA Clay settings
+static Layer       *s_hands;    // Analog watch hands
+static struct clay  s_conf;     // Configuration AKA Clay settings
 
 // Vibrate using one of predefined patterns TYPE.
 static void
@@ -109,7 +109,8 @@ text_update(Layer *layer, GContext *ctx)
 	// around text layer to separate it from background.
 	if (gcolor_equal(s_conf.bg_color, GColorWhite)) {
 		graphics_context_set_fill_color(ctx, GColorBlack);
-		graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
+		graphics_fill_rect(ctx, bounds, 6,
+				   GCornerTopLeft | GCornerTopRight);
 		bounds.origin.y += 1;
 	}
 	graphics_context_set_fill_color(ctx, GColorWhite);
@@ -412,7 +413,7 @@ conf_load(struct clay *conf)
 	conf->fg_bt    = true;
 	conf->vibe_bt  = VIBE_NUL;
 	conf->vibe_h   = VIBE_NUL;
-	conf->date[0]  = 0;	// Empty string force default format
+	conf->date[0]  = 0;     // Empty string force default format
 	persist_read_data(CONF_KEY, conf, sizeof(struct clay));
 }
 
@@ -532,7 +533,7 @@ main(void)
 	app_message_set_context(&s_conf);
 	app_message_register_inbox_received(conf_onmsg);
 	app_message_open(dict_calc_buffer_size(8, 16), 0);
-	
+
 	// Watchface event loop.
 	app_event_loop();
 
