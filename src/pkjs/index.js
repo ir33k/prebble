@@ -20,32 +20,11 @@ new Clay([
         "defaultValue": "Background"
       },
       {
-        "type": "select",
-        "messageKey": "BGTYPE",
-        "label": "Type",
-        "defaultValue": 1,
-        "options": [
-          { "value": 0, "label": "None" },
-          { "value": 1, "label": "Solid color" },
-          { "value": 2, "label": "Battery charge" }
-        ]
-      },
-      {
-        "id": "bgtype-none-text",
-        "type": "text",
-        "defaultValue": "Background disabled. It will be white."
-      },
-      {
         "type": "color",
         "messageKey": "BGCOLOR",
         "label": "Color",
         "allowGray": true
-      },
-      {
-        "id": "bgtype-battery-text",
-        "type": "text",
-        "defaultValue": "Background color will reflect battery charge level."
-      },
+      }
     ]
   },
   {
@@ -63,14 +42,30 @@ new Clay([
         "options": [
           { "value": 0, "label": "None" },
           { "value": 1, "label": "Diagonal lines" },
-          { "value": 2, "label": "Dots" }
+          { "value": 2, "label": "Dots" },
+          { "value": 3, "label": "Dithering" },
+          { "value": 4, "label": "Battery charge" }
         ]
+      },
+      {
+        "id": "fgtype-battery-text",
+        "type": "text",
+        "defaultValue": "Dithering will reflect battery charge percent.  0% of battery equals background color, 100% equals pattern color.  Except if you are using black then dithering will avoid getting pure black."
       },
       {
         "type": "color",
         "messageKey": "FGCOLOR",
-        "label": "Color",
-        "allowGray": true
+        "label": "Color"
+      },
+      {
+        "type": "slider",
+        "messageKey": "FGDITHER",
+        "defaultValue": 144,
+        "label": "Dithering percent",
+        "description": "Density of dithering pattern.",
+        "min": 0,
+        "max": 252,
+        "step": 4
       },
       {
         "type": "toggle",
@@ -156,24 +151,19 @@ new Clay([
 
   this.on(this.EVENTS.AFTER_BUILD, function () {
     hideOnValue(
-      this.getItemByMessageKey('BGTYPE'),
-      this.getItemById('bgtype-none-text'),
-      ["1", "2"]
-    )
-    hideOnValue(
-      this.getItemByMessageKey('BGTYPE'),
-      this.getItemByMessageKey('BGCOLOR'),
-      ["0", "2"]
-    )
-    hideOnValue(
-      this.getItemByMessageKey('BGTYPE'),
-      this.getItemById('bgtype-battery-text'),
-      ["0", "1"]
+      this.getItemByMessageKey('FGTYPE'),
+      this.getItemById('fgtype-battery-text'),
+      ["0", "1", "2", "3"]
     )
     hideOnValue(
       this.getItemByMessageKey('FGTYPE'),
       this.getItemByMessageKey('FGCOLOR'),
       ["0"]
+    )
+    hideOnValue(
+      this.getItemByMessageKey('FGTYPE'),
+      this.getItemByMessageKey('FGDITHER'),
+      ["0", "1", "2", "4"]
     )
     hideOnValue(
       this.getItemByMessageKey('FGTYPE'),

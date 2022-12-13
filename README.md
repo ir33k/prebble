@@ -573,6 +573,38 @@ improved.
 So there are many areas that can be polished.  I think I will be able
 to do some of them in upcoming week.
 
+### 2022.12.14 Wed 11:03 - v3.0 Dithering FTW
+
+There it is.  I did a big refactor.  That include some small fixes.
+For example there was bug not allowing you to go back to default date
+format and white border around minutes clock hand was a bit off.
+
+But the biggest change is introduction of Dithering.  Initially I
+wanted to have it just to enhance how battery status is shown on black
+and white screens with background color.  But it works so great that
+it is used even on color display.  And it's a pattern, not background.
+This makes more sense because with dithering as background other
+patterns rendered on top could disappear in dithering pixels patterns.
+And also dithering needs it's own color.  By having dithering as
+pattern I can use pattern color for it and there is no conflict with
+other patterns.  This works great.  All old patterns can still be used
+as before.  The only breaking change I introduced is that on color
+display battery status is now shown with dithering instead of multiple
+predefined colors.  Great way of using dithering for battery status is
+to for example set background color to red and pattern color to green.
+Then when battery is full you have green background and it slowly
+transition to red as we approaching to 0% of battery.  This can create
+nice color transitions.  For example when blue and red are used you
+will get purple on 50% of battery.
+
+Implementation of dithering forced me to look into frame buffer.  This
+allows to modify pixels directly and with that it's faster.  I used it
+on lines pattern as well.
+
+There are also improvements to Clay settings page.  It's now more
+descriptive.  And you can now define different vibration when
+Bluetooth is connected and different when it's disconnected.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
