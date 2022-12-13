@@ -1,7 +1,7 @@
 {
   "name": "prebble",
   "author": "irek",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "keywords": [
     "pebble-watchface",
     "hackathon1",
@@ -27,10 +27,10 @@
       "watchface": true
     },
     "messageKeys": [
-      "BGTYPE",
       "BGCOLOR",
       "FGTYPE",
       "FGCOLOR",
+      "FGDITHER",
       "FGBT",
       "VIBEBT0",
       "VIBEBT1",

@@ -1,18 +1,17 @@
-#include <pebble.h>
-
 // TODO(irek): New gif and images in store.
 
-#define CONF_KEY    1           // Clay config persist storage key
+#include <pebble.h>
+#include "pattern.h"
+#include "math.h"
 
-enum bg {                       // Possible background types
-	BG_NUL = 0,             // No background, results in white
-	BG_PLAIN,               // Use plain background color
-	BG_BATT                 // Color depends on battery level
-};
-enum fg {                       // Background pattern AKA foreground
+#define CONF_KEY  1              // Clay config persist storage key
+
+enum fg {                       // Pattern types
 	FG_NUL = 0,             // No foreground pattern
 	FG_LINES,               // Use lines pattern
-	FG_DOTS                 // Use dots pattern
+	FG_DOTS,                // Use dots pattern
+	FG_DITHER,              // Use dithering pattern
+	FG_BATT                 // Show battery status using dithering
 };
 enum vibe {                     // Possible vibrations
 	VIBE_NUL = 0,           // No vibrations
@@ -21,12 +20,11 @@ enum vibe {                     // Possible vibrations
 	VIBE_DOUBLE             // Double pulse
 };
 struct clay {                   // Struct for all Clay settings
-	// TODO(irek): Add dithering type.
-	enum bg     bg_type;    // Background type
-	GColor      bg_color;   // Background color
+	GColor      bg_color;   // Main background color
 	enum fg     fg_type;    // Foregroud AKA background pattern
 	GColor      fg_color;   // Foreground color
-	bool        fg_bt;      // Hide pattern on BT disconnect
+	uint8_t     fg_dither;  // Dithering desity 0-252
+	bool        fg_bt;      // Hide pattern when BT disconnect
 	enum vibe   vibe_bt0;   // Vibration when BT disconnect
 	enum vibe   vibe_bt1;   // Vibration when BT connect
 	enum vibe   vibe_h;     // Vibration on each hour
@@ -58,62 +56,15 @@ vibe(enum vibe type)
 	}
 }
 
-// Draw patter of 45 deg diagonal lines of given COLOR with CTX in
-// RECT area.
-static void
-draw_pattern_lines(GContext *ctx, GRect rect, GColor color)
-{
-	// Y and X are starting points of lines.  Y starting position
-	// is iterated from top BEG to bottom END.  GAP determinate
-	// spacing between each line.  P1 and P2 are convenient vars.
-	// 2 magic numbers, on in GAP second in value calculation of
-	// BEG.  Both are adjusted to avoid overlaping lines with
-	// analog clock image diagonal lines which makes them look
-	// thicker than they are on Aplite gray background.
-	int16_t y, x = rect.origin.x;
-	uint16_t gap = 28;
-	int16_t beg = rect.origin.y - gap*(rect.size.w/gap) + 16;
-	int16_t end = rect.origin.y + rect.size.h;
-	GPoint p1, p2;
-
-	graphics_context_set_antialiased(ctx, false);
-	graphics_context_set_stroke_color(ctx, color);
-	graphics_context_set_stroke_width(ctx, 1);
-	for (y = beg; y < end; y += gap) {
-		p1 = GPoint(x, y);
-		p2 = GPoint(x + rect.size.w, y + rect.size.w);
-		graphics_draw_line(ctx, p1, p2);
-	}
-}
-
-// Draw patter of small dots of given COLOR with CTX in RECT area.
-static void
-draw_pattern_dots(GContext *ctx, GRect rect, GColor color)
-{
-	int32_t x, y;
-	uint16_t gap = rect.size.w / 7;
-
-	for (x = rect.origin.x + gap/2; x < rect.size.w; x += gap)
-	for (y = rect.origin.y + gap/2; y < rect.size.h; y += gap) {
-		graphics_context_set_fill_color(ctx, color);
-		graphics_fill_circle(ctx, GPoint(x, y), 1);
-	}
-}
-
 static void
 text_update(Layer *layer, GContext *ctx)
 {
 	GRect bounds = layer_get_bounds(layer);
 
 #ifdef PBL_RECT
-	// In case of white background we want to have black outline
-	// around text layer to separate it from background.
-	if (gcolor_equal(s_conf.bg_color, GColorWhite)) {
-		graphics_context_set_fill_color(ctx, GColorBlack);
-		graphics_fill_rect(ctx, bounds, 6,
-				   GCornerTopLeft | GCornerTopRight);
-		bounds.origin.y += 1;
-	}
+	graphics_context_set_fill_color(ctx, GColorBlack);
+	graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
+	bounds.origin.y += 1;
 	graphics_context_set_fill_color(ctx, GColorWhite);
 	graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
 #else
@@ -121,13 +72,9 @@ text_update(Layer *layer, GContext *ctx)
 			       bounds.origin.y + bounds.size.h);
 	graphics_context_set_fill_color(ctx, GColorWhite);
 	graphics_fill_circle(ctx, center, bounds.size.h-1);
-	// In case of white background we want to have black outline
-	// around text layer to separate it from background.
-	if (gcolor_equal(s_conf.bg_color, GColorWhite)) {
-		graphics_context_set_stroke_color(ctx, GColorBlack);
-		graphics_context_set_stroke_width(ctx, 1);
-		graphics_draw_circle(ctx, center, bounds.size.h);
-	}
+	graphics_context_set_stroke_color(ctx, GColorBlack);
+	graphics_context_set_stroke_width(ctx, 1);
+	graphics_draw_circle(ctx, center, bounds.size.h);
 #endif
 }
 
@@ -201,20 +148,27 @@ static void
 bg_update(Layer *layer, GContext *ctx)
 {
 	GRect bounds = layer_get_bounds(layer);
-
+	
 	graphics_context_set_fill_color(ctx, s_conf.bg_color);
 	graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-	if (!s_conf.fg_bt || connection_service_peek_pebble_app_connection()) {
-		switch (s_conf.fg_type) {
-		case FG_LINES:
-			draw_pattern_lines(ctx, bounds, s_conf.fg_color);
-			break;
-		case FG_DOTS:
-			draw_pattern_dots(ctx, bounds, s_conf.fg_color);
-			break;
-		case FG_NUL:
-			break;
-		}
+	// Skip drawing background pattern on Bluetooth disconnect.
+	if (s_conf.fg_bt && !connection_service_peek_pebble_app_connection()) {
+		return;
+	}
+	// Draw background pattern.
+	switch (s_conf.fg_type) {
+	case FG_LINES:
+		pattern_lines(ctx, bounds, s_conf.fg_color);
+		break;
+	case FG_DOTS:
+		pattern_dots(ctx, bounds, s_conf.fg_color);
+		break;
+	case FG_DITHER:
+	case FG_BATT:
+		pattern_dither(ctx, bounds, s_conf.fg_color, s_conf.fg_dither);
+		break;
+	case FG_NUL:
+		break;
 	}
 }
 
@@ -241,7 +195,6 @@ unobstructed_change(AnimationProgress _p, void *win)
 	GRect  bounds = layer_get_bounds(layer);
 	GRect ubounds = layer_get_unobstructed_bounds(layer);
 
-	// TODO(irek): Do it with animations.
 	layer_set_hidden(s_text, !grect_equal(&bounds, &ubounds));
 }
 
@@ -358,33 +311,19 @@ bluetooth(bool connected)
 }
 
 // Handle battery state change.  Used when s_conf.bg_type is set to
-// BG_BAT to define backgorund color based on battery charge status.
+// BG_BATT to define dithering based on battery STATE.
 static void
 battery(BatteryChargeState state)
 {
-	// TODO(irek): Add more colors along with colors desciption on
-	// settings page.
-#ifdef PBL_BW
-	if (state.charge_percent > 30) {
-		s_conf.bg_color = GColorLightGray;
-	} else {
-		s_conf.bg_color = GColorWhite;
-	}
-#else
-	if (state.charge_percent > 60) {
-		s_conf.bg_color = GColorIslamicGreen;
-	} else if (state.charge_percent > 30) {
-		s_conf.bg_color = GColorCobaltBlue;
-	} else {
-		s_conf.bg_color = GColorRed;
-	}
-#endif
-	layer_mark_dirty(s_bg);
-	// s_text layer reacts to white background by adding black
-	// border to separate itself from background.
-	layer_mark_dirty(s_text);
-}
+	// With MIN and MAX I'm trying to avoid rendering dither
+	// pattern in all black by applying margin.
+	uint8_t min = gcolor_equal(s_conf.bg_color, GColorBlack) ? 27 : 0;
+	uint8_t max = gcolor_equal(s_conf.fg_color, GColorBlack) ? 73 : 100;
 
+	s_conf.fg_dither = normal(state.charge_percent, 0, 100, min, max);
+	s_conf.fg_dither = normal(s_conf.fg_dither,     0, 100,   0, 252);
+	layer_mark_dirty(s_bg);
+}
 
 // TickHandler, runs on each minute.
 static void
@@ -407,15 +346,15 @@ static void
 conf_load(struct clay *conf)
 {
 	// Apply defaults first then load old values if possible.
-	conf->bg_type  = BG_PLAIN;
-	conf->bg_color = PBL_IF_BW_ELSE(GColorLightGray, GColorRed);
-	conf->fg_type  = FG_LINES;
-	conf->fg_color = GColorBlack;
-	conf->fg_bt    = true;
-	conf->vibe_bt0 = VIBE_NUL;
-	conf->vibe_bt1 = VIBE_NUL;
-	conf->vibe_h   = VIBE_NUL;
-	conf->date[0]  = 0;     // Empty string force default format
+	conf->bg_color  = PBL_IF_BW_ELSE(GColorLightGray, GColorRed);
+	conf->fg_type   = FG_LINES;
+	conf->fg_color  = GColorBlack;
+	conf->fg_dither = 144;
+	conf->fg_bt     = false;
+	conf->vibe_bt0  = VIBE_NUL;
+	conf->vibe_bt1  = VIBE_NUL;
+	conf->vibe_h    = VIBE_NUL;
+	conf->date[0]   = 0;    // Empty string force default format
 	persist_read_data(CONF_KEY, conf, sizeof(struct clay));
 }
 
@@ -428,19 +367,10 @@ conf_save(struct clay *conf)
 static void
 conf_apply(struct clay *conf)
 {
-	// Set background color.
-	switch (conf->bg_type) {
-	case BG_PLAIN:
-		break;
-	case BG_BATT:
+	if (conf->fg_type == FG_BATT) {
 		battery_state_service_subscribe(battery);
 		battery(battery_state_service_peek());
-		break;
-	case BG_NUL:
-		conf->bg_color = GColorWhite;
-		break;
-	}
-	if (conf->bg_type != BG_BATT) {
+	} else {
 		battery_state_service_unsubscribe();
 	}
 
@@ -458,9 +388,8 @@ conf_apply(struct clay *conf)
 		strcpy(conf->date, PBL_IF_ROUND_ELSE("%a %m.%d", "%A %m.%d"));
 	}
 
-	// Redraw layers.
+	// Redraw background
 	layer_mark_dirty(s_bg);
-	layer_mark_dirty(s_text);
 
 	// Force date update.
 	time_t timestamp = time(NULL);
@@ -473,9 +402,6 @@ conf_onmsg(DictionaryIterator *di, void *ctx)
 	struct clay *conf = (struct clay *) ctx;
 	Tuple *tuple;
 
-	if ((tuple = dict_find(di, MESSAGE_KEY_BGTYPE))) {
-		conf->bg_type = atoi(tuple->value->cstring);
-	}
 	if ((tuple = dict_find(di, MESSAGE_KEY_BGCOLOR))) {
 		conf->bg_color = GColorFromHEX(tuple->value->int32);
 	}
@@ -484,6 +410,9 @@ conf_onmsg(DictionaryIterator *di, void *ctx)
 	}
 	if ((tuple = dict_find(di, MESSAGE_KEY_FGCOLOR))) {
 		conf->fg_color = GColorFromHEX(tuple->value->int32);
+	}
+	if ((tuple = dict_find(di, MESSAGE_KEY_FGDITHER))) {
+		conf->fg_dither = tuple->value->int32;
 	}
 	if ((tuple = dict_find(di, MESSAGE_KEY_FGBT))) {
 		conf->fg_bt = tuple->value->int8;
