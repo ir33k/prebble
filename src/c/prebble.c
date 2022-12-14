@@ -317,11 +317,10 @@ battery(BatteryChargeState state)
 {
 	// With MIN and MAX I'm trying to avoid rendering dither
 	// pattern in all black by applying margin.
-	uint8_t min = gcolor_equal(s_conf.bg_color, GColorBlack) ? 27 : 0;
-	uint8_t max = gcolor_equal(s_conf.fg_color, GColorBlack) ? 73 : 100;
+	uint8_t min = gcolor_equal(s_conf.bg_color, GColorBlack) ?  72 :   0;
+	uint8_t max = gcolor_equal(s_conf.fg_color, GColorBlack) ? 180 : 252;
 
 	s_conf.fg_dither = normal(state.charge_percent, 0, 100, min, max);
-	s_conf.fg_dither = normal(s_conf.fg_dither,     0, 100,   0, 252);
 	layer_mark_dirty(s_bg);
 }
 
