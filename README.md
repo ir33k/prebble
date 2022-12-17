@@ -605,6 +605,13 @@ There are also improvements to Clay settings page.  It's now more
 descriptive.  And you can now define different vibration when
 Bluetooth is connected and different when it's disconnected.
 
+### 2022.12.17 Sat 13:52 - v3.0 Released
+
+I just released version 3.0 with new gifs and images in app store.
+Only for aplite and basalt tho.  I don't have strengths to do it for
+chalk.  Anyway I think that's it for now.  Unless there will be a bug
+repport or I rly feel like to change / add something.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
