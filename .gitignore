@@ -3,3 +3,6 @@ build
 *.*~
 TAGS
 node_modules
+src/img/screenshots
+src/img/*-gif/
+*.blend1
