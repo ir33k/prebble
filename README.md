@@ -36,27 +36,9 @@ and animations).
 
 ## Screenshots
 
-### Aplite
-
-![aplite](src/img/aplite01.png)
-
-### Basalt
-
-![basalt gif](src/img/basalt.gif)
-![basalt red](src/img/basalt01.png)
-![basalt quick view](src/img/basalt04.png)
-![basalt am pm](src/img/basalt05.png)
-![basalt green](src/img/basalt06.png)
-
-### Chalk
-
-![chalk red](src/img/chalk02.png)
-![chalk green](src/img/chalk01.png)
-
-### Diorite
-
-![diorite](src/img/diorite01.png)
-![diorite quick view](src/img/diorite02.png)
+![aplite](src/img/aplite.gif)
+![basalt](src/img/basalt.gif)
+![chalk](src/img/chalk01.png)
 
 ## Recordings of animations
 
