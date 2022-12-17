@@ -45,19 +45,19 @@ fbuf_each(struct fbuf_each_ctx *fb, GContext *ctx, GRect bound)
 	// Init.
 	if (fb->fb == 0) {
 		fb->fb   = graphics_capture_frame_buffer(ctx);
-		fb->y    = bound.origin.y;
+		fb->y    = MAX(0, bound.origin.y);
 		fb->info = gbitmap_get_data_row_info(fb->fb, fb->y);
 		fb->x    = MAX(fb->info.min_x, bound.origin.x) - 1;
 	}
 	// Update x,y on each call.
 	fb->x += 1;
-	if (fb->x > MIN(fb->info.max_x, bound.size.w)) {
+	if (fb->x > MIN(fb->info.max_x, bound.origin.x + bound.size.w)) {
 		fb->y   += 1;
 		fb->info = gbitmap_get_data_row_info(fb->fb, fb->y);
 		fb->x    = MAX(fb->info.min_x, bound.origin.x);
 	}
 	// End.
-	if (fb->y >= bound.size.h) {
+	if (fb->y >= bound.origin.y + bound.size.h) {
 		graphics_release_frame_buffer(ctx, fb->fb);
 		fb->fb = 0;
 		return 0;       // End here

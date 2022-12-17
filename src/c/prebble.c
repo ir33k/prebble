@@ -1,5 +1,3 @@
-// TODO(irek): New gif and images in store.
-
 #include <pebble.h>
 #include "pattern.h"
 #include "math.h"
