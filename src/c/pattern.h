@@ -1,9 +1,8 @@
-// Draw uniform dithering pattern.
+// Draw uniform patterns: dithering, lines, dots.
 
 #ifndef PATTERN_H
 #define PATTERN_H
 
-#include "math.h"
 #include "fbuf.h"
 
 static const uint8_t pattern__dither_map[8][8] = {

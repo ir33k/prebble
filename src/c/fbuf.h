@@ -4,6 +4,8 @@
 #ifndef FBUF_H
 #define FBUF_H
 
+#include "math.h"
+
 struct fbuf_each_ctx {          // fbuf_each() context
 	GBitmap *fb;
 	GBitmapDataRowInfo info;

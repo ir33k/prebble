@@ -2,7 +2,7 @@
 #include "pattern.h"
 #include "math.h"
 
-#define CONF_KEY  1              // Clay config persist storage key
+#define CONF_KEY  1             // Clay config persist storage key
 
 enum fg {                       // Pattern types
 	FG_NUL = 0,             // No foreground pattern
@@ -21,7 +21,7 @@ struct clay {                   // Struct for all Clay settings
 	GColor      bg_color;   // Main background color
 	enum fg     fg_type;    // Foregroud AKA background pattern
 	GColor      fg_color;   // Foreground color
-	uint8_t     fg_dither;  // Dithering desity 0-252
+	uint8_t     fg_dither;  // Dithering density 0-252
 	bool        fg_bt;      // Hide pattern when BT disconnect
 	enum vibe   vibe_bt0;   // Vibration when BT disconnect
 	enum vibe   vibe_bt1;   // Vibration when BT connect
@@ -65,9 +65,9 @@ text_update(Layer *layer, GContext *ctx)
 	bounds.origin.y += 1;
 	graphics_context_set_fill_color(ctx, GColorWhite);
 	graphics_fill_rect(ctx, bounds, 6, GCornerTopLeft | GCornerTopRight);
-#else
+#else   // Pebble round
 	GPoint center = GPoint(bounds.origin.x + bounds.size.w/2,
-			       bounds.origin.y + bounds.size.h);
+	                       bounds.origin.y + bounds.size.h);
 	graphics_context_set_fill_color(ctx, GColorWhite);
 	graphics_fill_circle(ctx, center, bounds.size.h-1);
 	graphics_context_set_stroke_color(ctx, GColorBlack);
@@ -134,7 +134,7 @@ hands_update(Layer *layer, GContext *ctx)
 	// Hour hand.
 	inset = grect_inset(bounds, GEdgeInsets(16));
 	angle = DEG_TO_TRIGANGLE(360*(time->tm_hour%12)/12) +
-		DEG_TO_TRIGANGLE(360/12*time->tm_min/60);
+	        DEG_TO_TRIGANGLE(360/12*time->tm_min/60);
 	point = gpoint_from_polar(inset, GOvalScaleModeFitCircle, angle);
 	graphics_draw_line(ctx, mid, point);
 	graphics_fill_circle(ctx, point, 2);
@@ -424,6 +424,10 @@ conf_onmsg(DictionaryIterator *di, void *ctx)
 		conf->vibe_h = atoi(tuple->value->cstring);
 	}
 	if ((tuple = dict_find(di, MESSAGE_KEY_DATE))) {
+		// It's safe to use strcpy here because dst buffer is
+		// 16 bytes long and MESSAGE_KEY_DATE possible values
+		// are hard coded and none of them is even close that
+		// size.
 		strcpy(conf->date, tuple->value->cstring);
 	}
 	conf_save(conf);

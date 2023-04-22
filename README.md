@@ -594,6 +594,20 @@ Only for aplite and basalt tho.  I don't have strengths to do it for
 chalk.  Anyway I think that's it for now.  Unless there will be a bug
 repport or I rly feel like to change / add something.
 
+### 2023.04.22 Sat 11:02 - Revision
+
+It has been 5 months since release of v1.0 and 4 since v3.0.  I went
+back to the project to do small revision.  I found few small typos and
+one include macro in wrong file.  Besides that everything looks solid
+and I had no troubles reading and understanding the code even after
+those 4 months.  This is a good sign especially considering that this
+was my first and only Pebble project and at this point I don't rly
+remember anything from Pebble API.
+
+Looking at the Pebble store [pRebble - basalt][] is see that this
+watchface got 46 hearts.  This is the best score on the first page
+with all watchfaces making me very proud and happy.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
@@ -620,3 +634,4 @@ repport or I rly feel like to change / add something.
 [Add menu item commit]: https://github.com/not-phoeniix/pixel/commit/e80c8b0e012b7a8da5929d6819782f432a1b697e
 [design.svg]: src/img/design.svg
 [pebble-clay]: https://github.com/pebble/clay
+[appstore settings]: https://apps.rebble.io/en_US/dev-settings?dev_settings=true
