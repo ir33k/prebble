@@ -608,6 +608,35 @@ Looking at the Pebble store [pRebble - basalt][] is see that this
 watchface got 46 hearts.  This is the best score on the first page
 with all watchfaces making me very proud and happy.
 
+### 2023.09.24 Sun 05:05 - Why won't you die?
+
+Just watched [Pebble Smartwatch: From $230 Million to Zero][] and it
+was surprising to see that despite being "dead" people still talk
+about Pebble.  [Rebble Discord][] is still active too.  And there are
+new watchfaces in Pebble store.  Looks like ideas are bulletproof.
+
+And speaking of ideas.  Seeing that pRebble watchface has now more
+than 60 hearts ([pRebble - basalt][]) I started thinking on new idea.
+There is a chance that there will be second edition of Hackathon.
+Should I join?  What should I do?
+
+One idea is to extend this watchface with one last missing feature
+that many watchfaces have.  That is weather forecasting.  Other idea
+is to do something completely opposite this time.  So pRebble was all
+about being practical and well designed with readability as number one
+top priority.  What about going to polar opposite with something that
+is fun, innovative and just to show off to friends.  You know like
+[Perspective][] watchface.  Or maybe something that is just a pretty
+picture.  I always loved watchfaces from [dezign999][].  I also like
+the idea of having mini virtual world as watchface where you collect
+points by wearing the watchface or by collecting steps and then you
+can exchange them for more stuff that you can put into this world like
+in [Steppet][].  I could also do an app this time.  I would probably
+ended up making a game.
+
+Anyway.  There is a time to think of another "bulletproof" idea.  And
+when the time comes - I will be ready.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
@@ -635,3 +664,8 @@ with all watchfaces making me very proud and happy.
 [design.svg]: src/img/design.svg
 [pebble-clay]: https://github.com/pebble/clay
 [appstore settings]: https://apps.rebble.io/en_US/dev-settings?dev_settings=true
+[Pebble Smartwatch: From $230 Million to Zero]: https://www.youtube.com/watch?v=SRdMQwQT47k
+[Rebble Discord]: https://discordapp.com/invite/aRUAYFN
+[Perspective]: https://apps.rebble.io/en_US/application/52da8234227cbe482b000120?section=watchfaces
+[dezign999]: https://apps.rebble.io/en_US/developer/52f03b26a0cb6a3454000dfb/1?hardware=basalt&query=darth%2525252520sweater&section=watchfaces
+[Steppet]: https://apps.rebble.io/en_US/application/57c90ebebe5ad0d0cf000041?section=watchfaces
