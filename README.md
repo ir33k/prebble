@@ -637,6 +637,24 @@ ended up making a game.
 Anyway.  There is a time to think of another "bulletproof" idea.  And
 when the time comes - I will be ready.
 
+### 2023.12.17 Sun 06:31 - v3.0 Anniversary
+
+The Hackathon #002 did not happen, at least not in this year.  But it
+is an anniversary of v3.0 release.  And I'm writing because what is
+surprising to me it that the watchface keeps getting likes.  71 is
+where it stands now.  I guess I'm just glad that there are no bugs or
+complains.  I'm sure I would know about them by now but there are no
+issue on GitHub, no mails and no messages on Discord.  Code is rock
+solid.  I went over the implementation couple of times.  Good think
+it's small.
+
+I'm writing about all of this because sometimes it feels like now a
+days you can't just create a software, you also have to maintain it
+otherwise it will stop working very soon.  I guess it could happen to
+Pebble watchfaces too if the PebbleOS would receive regular updates
+that could potentially change it's behavior.  Funny thing but
+apparently the dead platform makes software alive longer.
+
 
 [Hackathon #001]: https://rebble.io/hackathon-001/
 [Install pip for Python2.7 in Debian 11 Bullseye]: https://blog.emacsos.com/pip2-in-debian-11-bullseye.html
