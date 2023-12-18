@@ -645,7 +645,7 @@ surprising to me it that the watchface keeps getting likes.  71 is
 where it stands now.  I guess I'm just glad that there are no bugs or
 complains.  I'm sure I would know about them by now but there are no
 issue on GitHub, no mails and no messages on Discord.  Code is rock
-solid.  I went over the implementation couple of times.  Good think
+solid.  I went over the implementation couple of times.  Good thing
 it's small.
 
 I'm writing about all of this because sometimes it feels like now a
