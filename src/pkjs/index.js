@@ -127,7 +127,8 @@ new Clay([
           { "value": "%a %d",    "label": "Sun 18" },
           { "value": "%Y.%m.%d", "label": "2022.11.18" },
           { "value": "%d.%m.%Y", "label": "18.11.2022" },
-          { "value": "%m.%d.%Y", "label": "11.18.2022" }
+          { "value": "%m.%d.%Y", "label": "11.18.2022" },
+          { "value": "%a %b %d", "label": "Sun Nov 18" }
         ]
       },
     ]
